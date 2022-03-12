@@ -1,0 +1,75 @@
+.journalEditor {
+    border-bottom: 2px solid #ccc;
+    border-right: 2px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 !important;
+}
+.journalEditor .journalCanvas {
+    height: 100%;
+}
+.journalToolbar {
+    position: sticky;
+    top: 71px;
+    z-index: 98;
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: left;
+    background-color: #ddd;
+    border-bottom: 2px solid #ccc;
+}
+.journalToolbar .divider:after {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 100%;
+    background-color: #ccc;
+}
+.journalToolbar .toolbarBtn svg {
+    width: 30px;
+    height: 30px;
+}
+.journalToolbar .toolbarBtn.disabled svg {
+    opacity: 0.5;
+}
+.journalToolbar .toolbarBtn, .journalToolbar .toolbarInput {
+    height: calc(100% - 20px);
+    padding: 10px;
+    border-right: 1px solid #ccc;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.journalToolbar .toolbarBtn:not(.disabled):hover {
+    background-color: #aaa;
+}
+.journalToolbar .toolbarBtn.active {
+    background-color: #777;
+    color: white;
+}
+/* FIX THIS JANK !! */
+.journalToolbar .postBtn {
+    cursor: pointer;
+    user-select: none;
+    outline: 10px solid var(--secondary);
+    background-color: var(--secondary);
+    color: white;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-weight: bold;
+}
+.journalToolbar .visibilityDropdown {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    padding: 0 5px;
+}

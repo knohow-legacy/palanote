@@ -1,0 +1,94 @@
+.sidebar {
+    position: sticky;
+    top: 0;
+    left: 0;
+
+    height: calc(100vh - 20px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 200px;
+    padding: 10px 3vw 10px 3vw;
+}
+.sidebar .brandHome, .sidebar .brandHome h1 {
+    text-decoration: none;
+    color: black;
+    line-height: 50px;
+    margin: 0;
+}
+.sidebar .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    font-size: 24px;
+
+    text-decoration: none;
+    color: black;
+    border-radius: 100px;
+    transition: background-color 0.2s;
+    padding: 10px 20px;
+}
+.sidebar .item svg {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+.sidebar .item:hover {
+    background-color: #eee;
+}
+.sidebar .item.active {
+    font-weight: bold;
+    background-color: #ccc;
+}
+.sidebar .postBtn {
+    color: white;
+    background-color: var(--secondary);
+    white-space: nowrap;
+}
+.sidebar .postBtn:hover {
+    background-color: var(--secondary-500);
+}
+.sidebar .postBtn.active {
+    background-color: var(--secondary-700);
+}
+
+.sidebar.minimized {
+    padding: 0 10px 0 10px;
+    width: 50px;
+    min-width: unset;
+}
+.sidebar.minimized .brandHome {
+    opacity: 0;
+}
+.sidebar.minimized .item {
+    padding: 10px;
+}
+.sidebar.minimized .item span {
+    display: none;
+}
+.sidebar .item.minimizeBtn {
+    user-select: none;
+    cursor: pointer;
+}
+@media screen and (max-width: 1100px) {
+    .sidebar {
+        padding: 0 10px 0 10px;
+        width: 50px;
+        min-width: unset;
+    }
+    .sidebar .brandHome {
+        opacity: 0;
+    }
+    .sidebar .item {
+        padding: 10px;
+    }
+    .sidebar .item span {
+        display: none;
+    }
+    .sidebar .item.minimizeBtn {
+        display: none;
+    }
+}
