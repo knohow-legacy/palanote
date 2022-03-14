@@ -1,17 +1,27 @@
 .journalEditor {
     border-bottom: 2px solid #ccc;
     border-right: 2px solid #ccc;
+    background-color: #ccc;
     width: 100%;
+    height: calc(100% - 71px);
     box-sizing: border-box;
-    margin: 0 !important;
+
+    overflow-x: hidden;
+    position: absolute;
+    top: 71px;
+    left: 0;
 }
 .journalEditor .journalCanvas {
+    background-color: white;
+}
+.journalEditor .journalCanvas canvas {
     height: 100%;
 }
 .journalToolbar {
     position: sticky;
-    top: 71px;
-    z-index: 98;
+    top: 0px;
+    height: 50px;
+    z-index: 96;
 
     display: flex;
     flex-direction: row;
@@ -27,6 +37,10 @@
     height: 100%;
     background-color: #ccc;
 }
+.journalToolbar .growableDivider {
+    flex-grow: 1;
+    border-right: 1px solid #ccc;
+}
 .journalToolbar .toolbarBtn svg {
     width: 30px;
     height: 30px;
@@ -34,8 +48,9 @@
 .journalToolbar .toolbarBtn.disabled svg {
     opacity: 0.5;
 }
-.journalToolbar .toolbarBtn, .journalToolbar .toolbarInput {
+.journalToolbar .toolbarBtn {
     height: calc(100% - 20px);
+    cursor: pointer;
     padding: 10px;
     border-right: 1px solid #ccc;
 
@@ -43,33 +58,20 @@
     flex-direction: row;
     align-items: center;
 }
-.journalToolbar .toolbarBtn:not(.disabled):hover {
+.journalToolbar .toolbarBtn:not(.disabled):not(.active):hover {
     background-color: #aaa;
 }
 .journalToolbar .toolbarBtn.active {
     background-color: #777;
     color: white;
 }
-/* FIX THIS JANK !! */
 .journalToolbar .postBtn {
-    cursor: pointer;
-    user-select: none;
-    outline: 10px solid var(--secondary);
     background-color: var(--secondary);
     color: white;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
+    padding: 10px 20px;
     font-weight: bold;
+    font-size: 1.17em;
 }
-.journalToolbar .visibilityDropdown {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    font-weight: bold;
-    padding: 0 5px;
+.journalToolbar .postBtn:hover {
+    background-color: var(--secondary-700) !important;
 }

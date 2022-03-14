@@ -1,0 +1,69 @@
+.toolOverlay {
+    position: absolute;
+    display: flex;
+    cursor: auto;
+    flex-direction: column;
+    gap: 5px;
+
+    animation: slideDown 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    top: 110%;
+    padding: 5px;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+.toolOverlay .colorPicker {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 5px;
+}
+.toolOverlay .colorPicker .color {
+    width: 30px;
+    height: 30px;
+    border-radius: 100px;
+    cursor: pointer;
+}
+.toolOverlay .colorPicker .selectedColor {
+    border: 3px solid var(--primary-50);
+    width: calc(30px - 6px);
+    height: calc(30px - 6px);
+}
+.toolOverlay .eraserPicker {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+}
+.toolOverlay .eraserPicker .eraser svg {
+    width: 20px;
+    height: 20px;
+}
+.toolOverlay .eraserPicker .eraser {
+    width: calc(100% - 6px);
+    background-color: #999;
+    border: 3px solid transparent;
+    height: calc(30px - 6px);
+    text-align: center;
+    border-radius: 100px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.toolOverlay .eraserPicker .selectedEraser {
+    border: 3px solid var(--primary-50);
+    width: calc(100% - 6px);
+    height: calc(30px - 6px);
+}
+.toolOverlay .widthPicker {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 1;
+}
+.toolOverlay .widthPicker .widthInput {
+    max-width: 40px;
+}
+.toolOverlay .widthPicker input {
+    /* Fix dumb input sizing */
+    max-width: 100%;
+}

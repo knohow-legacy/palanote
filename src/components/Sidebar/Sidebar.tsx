@@ -1,32 +1,38 @@
 import React from 'react';
 import './Sidebar.css';
-import { Add, Search, Home, Person, CloseFullscreen, OpenInFull } from '@mui/icons-material';
-import { NavLink, useLocation } from "react-router-dom"; 
+import { Add, Search, Home, Person, CloseFullscreen, OpenInFull, Login, Logout, Settings } from '@mui/icons-material';
+import { NavLink, useLocation } from "react-router-dom";
+
+import { Authentication } from '../Authentication/Authentication';
 
 const sideBarItems = [
     {
         name: 'Home',
         icon: <Home />,
         path: '/',
-        class: 'item'
+        class: 'item',
+        requiresLogin: true
     },
     {
         name: 'Search',
         icon: <Search />,
         path: '/search',
-        class: 'item'
+        class: 'item',
+        requiresLogin: false
     },
     {
         name: 'Profile',
         icon: <Person />,
         path: '/profile',
-        class: 'item'
+        class: 'item',
+        requiresLogin: true
     },
     {
         name: 'Journal',
         icon: <Add />,
         path: '/compose',
-        class: 'item postBtn'
+        class: 'item postBtn',
+        requiresLogin: true
     }
 ]
 
@@ -44,13 +50,14 @@ function Sidebar() {
 
     // Need an outer div for flexbox, and then the inner div for sticky support
     return (
-        <div>
+        <div style={{minHeight: "100vh"}}>
             <div className={"sidebar" + (isMinimized ? " minimized" : "")}>
                 <NavLink to="/" className="brandHome">
                     <h1>PostIt</h1>
                 </NavLink>
                 {
                     sideBarItems.map((item, index) => {
+                        if (!Authentication.isLoggedIn && item.requiresLogin) return '';
                         return (
                             <NavLink className={item.class + (activeIndex === index ? ' active' : '')} to={item.path} key={index}>
                                 {item.icon}
@@ -59,10 +66,23 @@ function Sidebar() {
                         )
                     })
                 }
+                {!Authentication.isLoggedIn && (
+                    <NavLink className={'item' + (activeIndex === 98 ? ' active' : '')} to="/login" key={98}>
+                        <Login />
+                        <span>Login</span>
+                    </NavLink>
+                )}
+                {Authentication.isLoggedIn && (
+                    <NavLink className={'item' + (activeIndex === 99 ? ' active' : '')} to="/settings" key={99}>
+                        <Settings />
+                        <span>Settings</span>
+                    </NavLink>
+                )}
                 <div onClick={() => {window.localStorage.setItem('sideBarMinimized', (!isMinimized).toString()); setMinimized(!isMinimized)}} className="item minimizeBtn">
                     {isMinimized ? <OpenInFull /> : <CloseFullscreen />}
                     <span>Minimize</span>
                 </div>
+                
             </div>
         </div>
     );

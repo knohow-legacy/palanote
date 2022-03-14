@@ -45,6 +45,7 @@ code {
 .app {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
 }
 
 .page {
@@ -52,6 +53,14 @@ code {
   position: relative;
   border-left: 1px solid #ccc;
 }
-.page > *:not(.header) {
-  margin: 10px;
+
+@keyframes slideDown {
+  from {
+      transform: translateY(-25%);
+      opacity: 0;
+  }
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
 }

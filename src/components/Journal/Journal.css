@@ -1,0 +1,34 @@
+.journal {
+    background-color: #ccc;
+    text-decoration: none;
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    width: calc(100% - 60px);
+    position: relative;
+}
+.journal:not(.expanded) {
+    cursor: pointer;
+}
+.journal:not(.expanded) .journalSvg {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+.journal:not(.expanded) .journalSvg:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, rgba(0,0,0, 0), 95%, rgba(0,0,0, 0.25) 100%);
+    width: 100%;
+    height: 100%;
+
+}
+.journal .journalSvg svg {
+    background-color: #fff;
+    width: 100% !important;
+    height: unset !important;
+}
