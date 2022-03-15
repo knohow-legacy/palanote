@@ -1,8 +1,8 @@
 import React from 'react';
-import './Search.css';
+import './SearchTag.css';
 
 import Header from '../../components/Header/Header';
-import SearchBar from './SearchBar/SearchBar';
+import SearchBar from '../search/SearchBar/SearchBar';
 
 function Search() {
   return (

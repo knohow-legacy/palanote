@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import './index.css';
 
 import Sidebar from './components/Sidebar/Sidebar';
@@ -9,30 +10,39 @@ import Compose from './pages/compose/Compose';
 import Login from './pages/login/Login';
 import Settings from './pages/settings/Settings';
 import Search from './pages/search/Search';
+import SearchTag from './pages/SearchTag/SearchTag';
 import Profile from './pages/profile/Profile';
 import JournalPage from './pages/journal/JournalPage';
+
+const queryClient = new QueryClient();
 
 function App() {
     return (
     <div className="app">
-        <Router>
-            <Sidebar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/compose" element={<Compose />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/profile">
-                    <Route index element={<Profile />} />
-                    <Route path=":userId" element={<Profile />} />
-                </Route>
-                <Route path="/journal">
-                    <Route index element={<Navigate to="/" />} />
-                    <Route path=":journalId" element={<JournalPage />} />
-                </Route>
-            </Routes>
-        </Router>
+        <QueryClientProvider client={queryClient}>
+            <Router>
+                <Sidebar />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/compose" element={<Compose />} />
+                    <Route path="/search" element={<Search />}>
+                        <Route path="./tag" element={<Navigate to="/search" />}>
+                            <Route path=":tag" element={<SearchTag />} />
+                        </Route>
+                    </Route>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/profile">
+                        <Route index element={<Profile />} />
+                        <Route path=":userId" element={<Profile />} />
+                    </Route>
+                    <Route path="/journal">
+                        <Route index element={<Navigate to="/" />} />
+                        <Route path=":journalId" element={<JournalPage />} />
+                    </Route>
+                </Routes>
+            </Router>
+        </QueryClientProvider>
     </div>
     );
 }

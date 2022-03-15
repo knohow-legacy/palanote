@@ -33,6 +33,8 @@ export interface User {
     id: string;
     pfp: string,
     username: string;
+    followers: number;
+    followedTopics: string[];
     bio?: string;
     //followerCount: number;
     //followingCount: number;
@@ -81,17 +83,15 @@ export class APIBase {
         return {success: false};
     }
 
-    async fetchJournalsByUser(userId: string) {
+    async fetchJournalsByUser(userId: string, offset=0, limit=10) {
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
         }
 
-        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}`, {headers}).catch(() => {});
-        if (resp && resp.status === 200) {
-            return {success: true, journals: resp.data};
-        }
-        return {success: false};
+        // react-query can handle errors
+        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}/${offset}`, {headers}).catch(() => {});
+        return (resp as any).data;
     }
 
     /**
@@ -99,7 +99,7 @@ export class APIBase {
      * @param {string} userId - The ID of the user to fetch.
      * @returns {Promise<{success: false} | {success: true, user: User}>} user - Success, and the user object if true.
      */
-    async fetchUserById(userId: string) : Promise<{success: false} | {success: true, user: User}> {
+    async fetchUserById(userId: string) : Promise<User> {
 
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
@@ -107,18 +107,14 @@ export class APIBase {
         }
         
         let resp = await axios.get(`${ENDPOINT}/fetch-user-by-id/${userId}`, {headers: headers}).catch(() => {});
-        
-        if (resp && resp.status === 200) {
-            return {success: true, user: resp.data};
-        }
-        return {success: false};
+        return (resp as any).data;
     }
 
     /**
      * Fetches the user that is currently logged in (by token).
      * @returns {Promise<{success: boolean, user?: User}>} Success, and the user object if true.
      */
-    fetchSelf() : Promise<{success: false} | {success: true, user: User}> { return this.fetchUserById('me'); }
+    fetchSelf() : Promise<User> { return this.fetchUserById('me'); }
 
 
     async uploadJournal(journal: Journal) : Promise<{success: false} | {success: true, journalID: string}> {

@@ -1,0 +1,53 @@
+.searchBar {
+    left: 5px;
+    top: 5px;
+    outline: 0;
+    position: relative;
+    width: calc(100% - 12px);
+    border-radius: 10px;
+    border: 1px solid #777;
+    overflow: hidden;
+}
+.searchBarQuery {
+    display: flex;
+    align-items: center;
+
+    background-color: #ccc;
+    border-radius: 10px;
+}
+.searchBarQuery svg {
+    width: 1.5em;
+    margin-left: 5px;
+    height: 1.5em;
+}
+.searchBarInput {
+    width: calc(100% - 20px);
+    background-color: transparent;
+    
+    outline: 0;
+    border: 0;
+    
+    font-size: 24px;
+    padding: 10px;
+}
+.searchBar .autocomplete {
+    display: flex;
+    flex-direction: column;
+}
+.searchBar .autocompleteItem {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    font-size: 1.25em;
+    gap: 5px;
+}
+.searchBar .autocompleteItem svg {
+    width: 1.25em;
+    margin-left: 5px;
+    height: 1.25em;
+}

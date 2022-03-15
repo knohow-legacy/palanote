@@ -7,8 +7,9 @@ import JournalToolbar from './JournalToolbar/JournalToolbar';
 import EditorHandler from './EditorHandler/EditorHandler';
 import Loading from '../Loading/Loading';
 
-function JournalEditor({titleRef, tagRef, draft} : {titleRef : any, tagRef : any, draft? : any}) {
+function JournalEditor({titleRef, tags, draft} : {titleRef : any, tags : any, draft? : any}) {
     let { editor, onReady } : any = useFabricJSEditor();
+    let [editorHandler, setEditorHandler] = React.useState<EditorHandler | null>(null);
     let [isLoading, setIsLoading] = React.useState(false);
     const ref : any = React.useRef(null);
 
@@ -23,12 +24,12 @@ function JournalEditor({titleRef, tagRef, draft} : {titleRef : any, tagRef : any
         editor.canvas.setDimensions({width: containerWidth, height: containerWidth / ratio});
         editor.canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
     }
-    
-    let editorHandler : any = undefined;
 
     function saveTitle(e:any) {
-        editorHandler.setTitle(e.target.value);
+        editorHandler?.setTitle(e.target.value);
     }
+
+    editorHandler?.setTags(tags);
 
     React.useEffect(() => {
         let ref = titleRef.current;
@@ -40,8 +41,8 @@ function JournalEditor({titleRef, tagRef, draft} : {titleRef : any, tagRef : any
         }
     })
 
-    if (editor) {
-        editorHandler = new EditorHandler(editor);
+    if (editor && !editorHandler) {
+        let editorHandler = new EditorHandler(editor);
 
         //inputRef.current.removeEventListener('keyup', saveTitle);
         //inputRef.current.addEventListener('keyup', saveTitle);
@@ -52,6 +53,8 @@ function JournalEditor({titleRef, tagRef, draft} : {titleRef : any, tagRef : any
             editor.canvas.setDimensions({width: 500, height: 1000});
         }
         resizeCanvas();
+
+        setEditorHandler(editorHandler);
     }
 
     React.useEffect(() => {
@@ -67,7 +70,7 @@ function JournalEditor({titleRef, tagRef, draft} : {titleRef : any, tagRef : any
     return (
         <div ref={ref} className="journalEditor">
             {isLoading && (<Loading />)}
-            <JournalToolbar isLoading={isLoading} setIsLoading={setIsLoading} editorHandler={editorHandler} />
+            {editorHandler && <JournalToolbar isLoading={isLoading} setIsLoading={setIsLoading} editorHandler={editorHandler} />}
             <FabricJSCanvas className="journalCanvas" onReady={onReady} />
         </div>
     );

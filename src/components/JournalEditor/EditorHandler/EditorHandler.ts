@@ -160,4 +160,8 @@ export default class EditorHandler {
     setTitle(title: string) {
         this.title = title;
     }
+
+    setTags(tags: string[]) {
+        this.topics = tags;
+    }
 }

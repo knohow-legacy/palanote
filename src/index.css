@@ -54,6 +54,21 @@ code {
   border-left: 1px solid #ccc;
 }
 
+.tag {
+  background-color: #333;
+  font-weight: bold;
+  margin-right: 10px;
+  color: white;
+  padding: 0px;
+  padding: 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  text-decoration: none;
+  
+  display: flex;
+  align-items: center;
+}
+
 @keyframes slideDown {
   from {
       transform: translateY(-25%);

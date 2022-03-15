@@ -5,11 +5,12 @@
     padding: 20px;
     width: calc(100% - 40px);
     height: calc(100% - 40px);
+    min-height: 260px;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 97;
 }
 .spinner {
-    position: sticky;
+    position: absolute;
     top: calc(50% - 25px);
     left: calc(50% - 25px);
     width: 50px;

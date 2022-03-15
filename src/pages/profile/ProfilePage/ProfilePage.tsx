@@ -3,13 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { Edit } from '@mui/icons-material';
 
 import './ProfilePage.css';
-import Loading from '../../../components/Loading/Loading';
-import Error from '../../../components/Error/Error';
 
 import Pfp from './elements/Pfp';
 import Banner from './elements/Banner';
 import Bio from './elements/Bio';
-import JournalList from '../../../components/JournalList/JournalList';
 
 function ProfilePage({user, journals, isSelf} : any) {
     return (

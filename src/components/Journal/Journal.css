@@ -8,6 +8,14 @@
     width: calc(100% - 60px);
     position: relative;
 }
+.journal h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.journal .topics {
+    display: flex;
+    margin: 5px 0;
+}
 .journal:not(.expanded) {
     cursor: pointer;
 }

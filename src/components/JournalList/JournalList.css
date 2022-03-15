@@ -7,3 +7,17 @@
     margin: 0;
     position: relative;
 }
+.journalList .bottom {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    text-align: middle;
+}
+.journalList .noMore {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    color: #aaa;
+}

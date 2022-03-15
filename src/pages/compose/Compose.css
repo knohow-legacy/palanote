@@ -1,0 +1,25 @@
+.tagInput {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: -5px;
+    min-width: 0;
+    box-sizing: border-box;
+    flex-grow: 0 !important;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+}
+.tagInput:focus-visible {
+    overflow-x: auto !important;
+}
+.tagInput .editable {
+    flex-shrink: 1;
+    min-width: 120px;
+    outline: 0;
+    max-width: 100%;
+    padding: 5px;
+    font-size: 24px;
+    position: relative;
+}
