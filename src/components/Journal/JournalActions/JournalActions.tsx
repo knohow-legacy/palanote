@@ -21,7 +21,7 @@ function JournalActions({journal, user} : {journal: PublishedJournal, user: User
                 </div>
                 <div className="comments">
                     <Comment />
-                    <span>{journal.comments.length}</span>
+                    <span>{journal.comments}</span>
                 </div>
                 <div className="remixes">
                     <AutoMode />

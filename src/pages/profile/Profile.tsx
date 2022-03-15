@@ -51,8 +51,7 @@ function Profile() {
         {data.user === null && <Loading />}
         <Header name={data.user ? `${data.user.username}` : `Profile`} />
         {data.user && <ProfilePage user={data.user} isSelf={true} />}
-        {!data.journals && <Loading />}
-        {data.journals && <JournalList journals={data.journals} />}
+        <JournalList journals={data.journals} />
       </div>
     );
   }

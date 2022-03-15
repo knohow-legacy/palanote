@@ -82,14 +82,12 @@ export class APIBase {
     }
 
     async fetchJournalsByUser(userId: string) {
-        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+        let headers : any = { 'Accept': 'application/json' };
+        if (Authentication.isLoggedIn) {
+            headers['Authorization'] = `Bearer ${Authentication.token}`;
+        }
 
-        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${Authentication.token}`,
-                'Accept': 'application/json'
-            }
-        }).catch(() => {});
+        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}`, {headers}).catch(() => {});
         if (resp && resp.status === 200) {
             return {success: true, journals: resp.data};
         }
