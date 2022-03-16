@@ -16,7 +16,7 @@ import { Person } from '@mui/icons-material';
 function Profile() {
     let { userId } = useParams();
 
-    const result = useQuery('user', async () => await API.fetchUserById(userId || 'me'));
+    const result = useQuery(`user-${userId}`, async () => await API.fetchUserById(userId || 'me'));
 
     if (!userId && !Authentication.isLoggedIn) return (<Navigate to="/" />);
 

@@ -7,7 +7,7 @@ import './Journal.css';
 import JournalActions from './JournalActions/JournalActions';
 
 function Journal({index, journal, expanded} : {index?: any, journal: PublishedJournal, expanded: boolean}) {
-    const result = useQuery('user', async () => await API.fetchUserById(journal.authorID));
+    const result = useQuery(`user-${journal.authorID}`, async () => await API.fetchUserById(journal.authorID));
 
     const navigate = useNavigate();
     

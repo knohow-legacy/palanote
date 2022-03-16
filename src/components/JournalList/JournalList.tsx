@@ -26,7 +26,7 @@ function JournalList({fetchRoute, fetchArgs} : {fetchRoute : Function, fetchArgs
         hasNextPage,
         isFetching,
         isFetchingNextPage,
-        status} : any = useInfiniteQuery('journals',
+        status} : any = useInfiniteQuery(`journals-${fetchArgs}`,
             async ({pageParam=0}) => {return await fetchRoute(...fetchArgs, pageParam, limit)},
             { getNextPageParam: (lastPage, pages) => (lastPage.length === 0 ? null : pages.length) }
         );
