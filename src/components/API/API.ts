@@ -1,7 +1,7 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const ENDPOINT = 'http://20.231.52.165:8080/api';
+const ENDPOINT = 'https://20.231.52.165:8080/api';
 
 export interface RemixInfo {
     "allow-remix": boolean;
@@ -91,7 +91,12 @@ export class APIBase {
 
         // react-query can handle errors
         let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}/${offset}`, {headers}).catch(() => {});
-        return (resp as any).data;
+        
+        if (resp) {
+            return (resp as any).data;
+        } else {
+            throw new Error('Could not fetch journals from the server. :/');
+        }
     }
 
     /**
@@ -107,7 +112,11 @@ export class APIBase {
         }
         
         let resp = await axios.get(`${ENDPOINT}/fetch-user-by-id/${userId}`, {headers: headers}).catch(() => {});
-        return (resp as any).data;
+        if (resp) {
+            return (resp as any).data;
+        } else {
+            throw new Error('Could not fetch user from the server. :/');
+        }
     }
 
     /**
