@@ -26,11 +26,24 @@ interface BrushSettingsOptions {
 type Tool = 'select' | 'pen' | 'highlighter' | 'eraser' | 'text';
 type BrushTool = 'pen' | 'highlighter' | 'eraser';
 
+type Events = 'undo' | 'redo' | 'update';
+
 export default class EditorHandler {
     editor : FabricJSEditor;
 
     psBrush : PSBrushIface;
     eraseBrush : fabric.BaseBrush;
+
+    // Undo/Redo History
+    undoHistory: any[] = [];
+    redoHistory: any[] = [];
+
+    // Listeners
+    listeners: {[event: string]: Function} = {
+        'undo': () => {},
+        'redo': () => {},
+        'update': () => {}
+    };
 
     visibility: 'public' | 'unlisted' | 'private' = 'public';
     isDraft: boolean = false;
@@ -69,21 +82,59 @@ export default class EditorHandler {
         }
     };
 
+    // Sort objects by opacity (highlights behind strokes)
+    sortByOpacity() {
+        this.editor.canvas._objects.sort((a:any, b:any) => {
+            return a.opacity - b.opacity;
+        });
+    }
+
     constructor(editor : FabricJSEditor) {
         this.editor = editor;
         this.psBrush = new PSBrush(editor.canvas);
         this.eraseBrush = new (fabric as any).EraserBrush(editor.canvas);
 
         this.editor.canvas.freeDrawingBrush = this.psBrush;
+        this.editor.canvas.uniformScaling = true;
+
+        this.editor.canvas.on("object:added", (e) => {
+            if (!(e.target as any)?.undone && !(e.target as any)?.redone) {
+                // Only update history on new items, not undone/redone items
+                this.redoHistory = [];
+                this.undoHistory.push({type: e.target?.type, target: e.target?.saveState()});
+            }
+
+            this.sortByOpacity();
+            this.notify('update')
+        })
 
         this.editor.canvas.on("erasing:end", ({targets, drawables}:any) => {
-            // TODO: find a better way to get bounding boxes of lines (not rectanges!)
-            if(this.currentTool === 'eraser' && this.settings[this.currentTool].removesFullStrokes) {
-                targets.forEach((obj:any) => obj.group?.removeWithUpdate(obj) || this.editor.canvas.remove(obj));
+            // TODO: find a better way to get bounding boxes of lines (not rectangles!)
+            if(this.currentTool === 'eraser') {
+                this.redoHistory = [];
+
+                if (this.settings[this.currentTool].removesFullStrokes) {
+                    this.undoHistory.push({type: 'eraseFull', target: targets.map((t:any) => t.saveState())});
+                    targets.forEach((obj:any) => this.editor.canvas.remove(obj));
+                } else {
+                    this.undoHistory.push({type: 'erasePartial', target: targets.map((t:any) => t.saveState())});
+                }
             }
+            this.notify('update')
         })
     }
 
+    // Listeners
+    setListener(event: Events, callback: () => void) {
+        this.listeners[event] = callback;
+    }
+
+    notify(event: Events) {
+        this.listeners[event]();
+    }
+
+
+    // Drafts
     loadDraft(draft : Journal) {
         if (!this.editor) return;
         // something
@@ -163,5 +214,128 @@ export default class EditorHandler {
 
     setTags(tags: string[]) {
         this.topics = tags;
+    }
+
+    // UNDO / REDO
+
+    hasUndoHistory() {
+        return this.undoHistory.length > 0;
+    }
+    hasRedoHistory() {
+        return this.redoHistory.length > 0;
+    }
+
+    undo() {
+        let undo = this.undoHistory.pop();
+        if (undo) {
+            switch(undo.type) {
+                case 'erasePartial':
+                    this.redoHistory.push({
+                        type: 'erasePartial',
+                        target: undo.target.map((obj:any) => {
+                            let erasePath = obj.clipPath._objects[obj.clipPath._objects.length - 1].saveState();
+                            
+                            console.log(obj.clipPath)
+                            if (obj.clipPath._objects.length > 2) {
+                                obj.clipPath.removeWithUpdate(erasePath);
+                                obj.clipPath.dirty = true;
+                            } else {
+                                obj.clipPath = null;
+                            }
+                            
+                            this.editor.canvas.remove(erasePath)
+
+                            obj.dirty = true;
+
+                            return {target: obj, erasePath};
+                        })
+                    })
+                    break;
+                case 'eraseFull':
+                    this.redoHistory.push({
+                        type: 'eraseFull',
+                        target: undo.target.map((obj:any) => {
+                            // Fabric filters out ".undone", so add custom properties like this
+                            obj['undone'] = true;
+                            
+                            // Remove the clip path that was used to erase this object (still added even with full eraser)
+                            if (obj.clipPath && obj.clipPath._objects.length > 2) {
+                                obj.clipPath.removeWithUpdate(obj.clipPath._objects[obj.clipPath._objects.length - 1]);
+                            } else {
+                                // if only line and mask, remove everything
+                                obj.clipPath = null;
+                            }
+                            
+                            this.editor.canvas.add(obj);
+                            return {target: obj};
+                        })
+                    })
+                    break;
+                default:
+                    // Stroke was added
+                    this.editor.canvas.remove(undo.target);
+                    this.redoHistory.push(undo);
+            }
+            
+            this.editor.canvas.renderAll();
+        }
+        this.notify('undo');
+    }
+
+    redo() {
+        let redo = this.redoHistory.pop();
+        if (redo) {
+            switch(redo.type) {
+                case 'erasePartial':
+                    this.undoHistory.push({
+                        type: 'erasePartial',
+                        target: redo.target.map((obj:any) => {
+                            // Add the clip path back
+                            console.log(obj.target)
+                            if (obj.target.clipPath) {
+                                obj.target.clipPath.addWithUpdate(obj.erasePath);
+                            } else {
+                                // Recreate the group created by the Eraser - MAY NOT BE 100% ACCURATE, causes clipping?
+                                obj.target.clipPath = new fabric.Group([
+                                    new fabric.Rect({
+                                        left: 0,
+                                        top: 0,
+                                        width: obj.target.width,
+                                        height: obj.target.height,
+                                        fill: 'rgb(0,0,0)',
+                                        originX: 'center',
+                                        originY: 'center'
+                                    }),
+                                    obj.erasePath
+                                ]);
+                            }
+                            
+
+                            obj.target.dirty = true;
+
+                            return obj.target;
+                        })
+                    })
+                    break;
+                case 'eraseFull':
+                    this.undoHistory.push({
+                        type: 'eraseFull',
+                        target: redo.target.map((obj:any) => {
+                            // Fabric filters out ".undone", so add custom properties like this
+                            this.editor.canvas.remove(obj.target);
+                            return obj.target;
+                        })
+                    })
+                    break;
+                default:
+                    // Stroke was removed by undo
+                    redo.target['redone'] = true;
+                    this.editor.canvas.add(redo.target);
+                    this.undoHistory.push(redo);
+            }
+            
+            this.editor.canvas.renderAll();
+        }
+        this.notify('undo');
     }
 }

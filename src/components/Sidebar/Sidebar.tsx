@@ -59,7 +59,7 @@ function Sidebar() {
                     sideBarItems.map((item, index) => {
                         if (!Authentication.isLoggedIn && item.requiresLogin) return '';
                         return (
-                            <NavLink className={item.class + (activeIndex === index ? ' active' : '')} to={item.path} key={index}>
+                            <NavLink onClick={(e) => {window.scrollTo(0,0)}} className={item.class + (activeIndex === index ? ' active' : '')} to={item.path} key={index}>
                                 {item.icon}
                                 <span>{item.name}</span>
                             </NavLink>

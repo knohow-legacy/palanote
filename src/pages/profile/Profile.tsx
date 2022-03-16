@@ -11,6 +11,7 @@ import { API } from '../../components/API/API';
 import ProfilePage from './ProfilePage/ProfilePage';
 import JournalList from '../../components/JournalList/JournalList';
 import { Authentication } from '../../components/Authentication/Authentication';
+import { Person } from '@mui/icons-material';
 
 function Profile() {
     let { userId } = useParams();
@@ -23,13 +24,13 @@ function Profile() {
       <div className="page profile">
         {result.status === 'error' && <Error text="Something went wrong loading this." />}
         {result.status === 'loading' && <Loading />}
-        <Header name={result.status === 'success' ? `${result.data.username}` : `Profile`} />
+        <Header icon={<Person />} name={result.status === 'success' ? `${result.data.username}` : `Profile`} />
         {result.status === 'success' && (<React.Fragment>
             <ProfilePage user={result.data} isSelf={true} />
             <JournalList fetchRoute={API.fetchJournalsByUser.bind(API)} fetchArgs={[result.data.id]} />
         </React.Fragment>)}
       </div>
     );
-  }
+}
 
 export default Profile;

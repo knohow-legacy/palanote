@@ -1,12 +1,13 @@
 .searchBar {
-    left: 5px;
-    top: 5px;
+    left: 0px;
+    top: 76px;
+    z-index: 1;
+    margin: 5px;
     outline: 0;
-    position: relative;
+    position: sticky;
     width: calc(100% - 12px);
     border-radius: 10px;
     border: 1px solid #777;
-    overflow: hidden;
 }
 .searchBarQuery {
     display: flex;
@@ -33,10 +34,18 @@
 .searchBar .autocomplete {
     display: flex;
     flex-direction: column;
+    position: absolute;
+    top: calc(100% - 5px);
+    width: 100%;
+
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+
 }
 .searchBar .autocompleteItem {
     padding: 5px;
     border-bottom: 1px solid #ccc;
+    background-color: #fff;
     cursor: pointer;
 
     display: flex;
@@ -45,6 +54,9 @@
     color: black;
     font-size: 1.25em;
     gap: 5px;
+}
+.searchBar .autocompleteItem:focus-visible {
+    background-color: var(--primary);
 }
 .searchBar .autocompleteItem svg {
     width: 1.25em;

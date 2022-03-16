@@ -1,7 +1,7 @@
 import React from 'react';
 import '../JournalEditor.css';
 
-import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Undo, Redo, Visibility, VisibilityOff } from '@mui/icons-material';
 import EditorHandler from '../EditorHandler/EditorHandler';
 import Dropdown from './Dropdown/Dropdown';
 import HandwritingTool from './HandwritingTool/HandwritingTool';
@@ -72,6 +72,36 @@ const tools = [
             }
         }
     },
+    divider,
+    {
+        type: 'disablableButton',
+        props: {
+            isDisabled: (editor: EditorHandler) : boolean => {
+                return !editor.hasUndoHistory();
+            },
+            title: 'Undo',
+            tool: 'undo',
+            icon: <Undo />,
+            onClick: (editor: EditorHandler, setActiveTool : any, isLoading:boolean, setIsLoading:any) => {
+                editor.undo();
+            }
+        }
+    },
+    {
+        type: 'disablableButton',
+        isDisabled: true,
+        props: {
+            isDisabled: (editor: EditorHandler) : boolean => {
+                return !editor.hasRedoHistory();
+            },
+            title: 'Redo',
+            tool: 'redo',
+            icon: <Redo />,
+            onClick: (editor: EditorHandler, setActiveTool : any, isLoading:boolean, setIsLoading:any) => {
+                editor.redo();
+            }
+        }
+    },
     growableDivider,
     {
         type: 'dropdown',
@@ -122,72 +152,86 @@ const tools = [
     }
 ]
 
-
-function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandler : EditorHandler | undefined, isLoading : boolean, setIsLoading : any}) {
+function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandler : EditorHandler, isLoading : boolean, setIsLoading : any}) {
     const [activeTool, setActiveTool] : [number, any] = React.useState(0);
+    const [updateParam, update] = React.useState(false);
 
-    if (editorHandler) {
-        return (
-            <div className="journalToolbar">
-                {tools.map((tool, index) => {
-                    switch(tool.type) {
-                        case 'divider':
-                            return <div key={`divider-${index}`} className="divider" />;
-                        case 'growableDivider':
-                            return <div key={`divider-${index}`} className="growableDivider" />
-                        case 'button':
-                            return (
-                                <div
-                                    key={tool.props.tool}
-                                    title={tool.props.title}
-                                    className={"toolbarBtn" + (activeTool === index ? " active" : "")}
-                                    onClick={(e) => {
-                                        (e.target as HTMLElement).blur();
-                                        tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
-                                    }}>
-                                    {tool.props.icon}
-                                </div>
-                            );
-                        case 'postButton':
-                            return (
-                                <div
-                                    key={tool.props.tool}
-                                    title={tool.props.title}
-                                    className="toolbarBtn postBtn"
-                                    onClick={() => {
-                                        tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
-                                    }}>
-                                    {tool.props.icon}
-                                    <span>{tool.props.title}</span>
-                                </div>
-                            );
-                        case 'HandwritingTool':
-                            return (
-                                <HandwritingTool
-                                    key={tool.props.tool}
-                                    isSelected={activeTool === index}
-                                    editorHandler={editorHandler}
-                                    {...tool.props}
-                                    onClick={(e : any) => {
-                                        (e.target as HTMLElement).blur();
-                                        tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
-                                    }}
-                                />
-                            );
-                        case 'dropdown':
-                            return (
-                                <Dropdown 
-                                    key={tool.props.tool}
-                                    editorHandler={editorHandler}
-                                    {...tool.props}
-                                />
-                            )
-                    }
-                })}
-            </div>
-        );
-    }
-    return (<div className="journalToolbar"></div>)
+    const forceUpdate = () => {update(!updateParam)}
+    editorHandler.setListener('update', forceUpdate);
+
+    const toolbar = tools.map((tool, index) => {
+        switch(tool.type) {
+            case 'divider':
+                return <div key={`divider-${index}`} className="divider" />;
+            case 'growableDivider':
+                return <div key={`divider-${index}`} className="growableDivider" />
+            case 'button':
+                return (
+                    <div
+                        key={tool.props.tool}
+                        title={tool.props.title}
+                        className={"toolbarBtn" + (activeTool === index ? " active" : "")}
+                        onClick={(e) => {
+                            (e.currentTarget as HTMLElement).blur();
+                            tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
+                        }}>
+                        {tool.props.icon}
+                    </div>
+                );
+            case 'disablableButton':
+                return (
+                    <div
+                        key={tool.props.tool}
+                        title={tool.props.title}
+                        className={"toolbarBtn" + ((tool as any).props.isDisabled(editorHandler) ? " disabled" : "")}
+                        onClick={(e) => {
+                            (e.currentTarget as HTMLElement).blur();
+                            if (!(tool as any).props.isDisabled(editorHandler)) {
+                                tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
+                            }
+                            forceUpdate();
+                        }}>
+                        {tool.props.icon}
+                    </div>
+                );
+            case 'postButton':
+                return (
+                    <div
+                        key={tool.props.tool}
+                        title={tool.props.title}
+                        className="toolbarBtn postBtn"
+                        onClick={() => {
+                            tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
+                        }}>
+                        {tool.props.icon}
+                        <span>{tool.props.title}</span>
+                    </div>
+                );
+            case 'HandwritingTool':
+                return (
+                    <HandwritingTool
+                        key={tool.props.tool}
+                        isSelected={activeTool === index}
+                        editorHandler={editorHandler}
+                        {...tool.props}
+                        onClick={(e : any) => {
+                            (e.target as HTMLElement).blur();
+                            tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
+                        }}
+                    />
+                );
+            case 'dropdown':
+                return (
+                    <Dropdown 
+                        key={tool.props.tool}
+                        editorHandler={editorHandler}
+                        {...tool.props}
+                    />
+                )
+        }
+    });
+
+    return (<div className="journalToolbar">{toolbar}</div>)
 }
 
 export default JournalToolbar;

@@ -2,7 +2,7 @@ import React from 'react';
 import './Compose.css';
 import { Tag } from '@mui/icons-material';
 
-function TagInput({tags, setTags} : any) {
+function TagInput({tags, setTags, maxTags=5} : any) {
 
     function validKey(keyCode: number, shiftKey: boolean) {
         return (
@@ -25,15 +25,19 @@ function TagInput({tags, setTags} : any) {
             // backspace
             setTags(tags.slice(0, tags.length - 1));
             e.target.value = tags[tags.length - 1];
+            e.target.placeholder = 'Add tags...';
         }
         if (e.keyCode === 32 || e.keyCode === 9 || e.keyCode === 13) { // #
             e.preventDefault();
             if (value.length > 0) {
                 let tagToAdd = value.includes('#') ? value.split('#')[1] : value;
-                if (!tags.includes(tagToAdd)) {
+                if (!tags.includes(tagToAdd) && tags.length < maxTags) {
                     setTags([...tags, tagToAdd.toLowerCase()]);
                 }
                 e.target.value = '';
+                if (tags.length >= maxTags - 1) {
+                    e.target.placeholder = 'Max tags reached.';
+                }
             }
         }
     }

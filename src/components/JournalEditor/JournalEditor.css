@@ -45,6 +45,9 @@
     width: 30px;
     height: 30px;
 }
+.journalToolbar .toolbarBtn.disabled {
+    cursor: not-allowed;
+}
 .journalToolbar .toolbarBtn.disabled svg {
     opacity: 0.5;
 }

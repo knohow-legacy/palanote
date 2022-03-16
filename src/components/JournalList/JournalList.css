@@ -13,7 +13,7 @@
     width: 100%;
     text-align: middle;
 }
-.journalList .noMore {
+.journalList .bottom *:not(.spinner):not(.loading) {
     position: absolute;
     top: 50%;
     left: 50%;

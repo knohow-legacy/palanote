@@ -83,7 +83,7 @@ export class APIBase {
         return {success: false};
     }
 
-    async fetchJournalsByUser(userId: string, offset=0, limit=10) {
+    async fetchJournalsByUser(userId: string, offset=0, limit=5) {
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
@@ -126,11 +126,26 @@ export class APIBase {
                 'Content-Type': 'application/json'
             }
         }).catch(() => {});
-        
         if (resp && resp.status === 200) {
             return {success: true, journalID: resp.data.JournalID};
         }
         return {success: false};
+    }
+
+    async fetchTagByQuery(tag: string, offset=0, limit=5) : Promise<any> {
+        let headers : any = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+        if (Authentication.isLoggedIn) {
+            headers['Authorization'] = `Bearer ${Authentication.token}`;
+        }
+        
+        let resp = await axios.post(`${ENDPOINT}/query-journals`, JSON.stringify({
+            query: tag,
+            fields: ['tags'],
+            sort: 'new',
+            page: offset,
+            remix: true
+        }), {headers: headers}).catch(() => {});
+        return (resp as any).data.results;
     }
 }
 

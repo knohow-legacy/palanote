@@ -10,18 +10,18 @@ function SearchBar({query} : {query: string}) {
 
     return (
         <div className="autocomplete">
-            {tag && <NavLink to={`/tag/${tag}`} key="tag" className="autocompleteItem">
+            {tag && <NavLink to={`/search/tag/${tag}`} key="tag" className="autocompleteItem">
                 <Tag />
                 <span>Search for <b>#{tag}</b></span>
             </NavLink>}
-            <div key="person" className="autocompleteItem">
+            <NavLink to={`/search/user/${query}`} key="person" className="autocompleteItem">
                 <PersonSearch />
                 <span>Search for user <b>{query}</b></span>
-            </div>
-            <div key="title" className="autocompleteItem">
+            </NavLink>
+            <NavLink to={`/search/journal/${query}`} key="title" className="autocompleteItem">
                 <FindInPage />
                 <span>Search for journal <b>{query}</b></span>
-            </div>
+            </NavLink>
         </div>
     );
 }

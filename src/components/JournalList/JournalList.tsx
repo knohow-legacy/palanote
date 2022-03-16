@@ -1,6 +1,6 @@
 import React from 'react';
 import { useInfiniteQuery } from 'react-query';
-import useIntersectionObserver from './useIntersectionObserver';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 import { PublishedJournal } from '../API/API';
 import Journal from '../Journal/Journal';

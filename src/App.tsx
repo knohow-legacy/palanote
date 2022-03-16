@@ -25,8 +25,10 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/compose" element={<Compose />} />
-                    <Route path="/search" element={<Search />}>
-                        <Route path="./tag" element={<Navigate to="/search" />}>
+                    <Route path="/search">
+                        <Route index element={<Search />} />
+                        <Route path="/search/tag">
+                            <Route index element={<Navigate to="/search" />} />
                             <Route path=":tag" element={<SearchTag />} />
                         </Route>
                     </Route>

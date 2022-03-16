@@ -1,0 +1,69 @@
+.profileHeader {
+    position: relative;
+    height: 350px;
+}
+.profileHeader .banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background-color: #bbb;
+}
+.tagProfilePage .profileHeader .pfp {
+    background-color: white;
+}
+.tagProfilePage .profileHeader .bio {
+    position: absolute;
+    color: black;
+    top: calc(8px + min(15vw, 125px));
+    left: 5vw;
+    width: calc(100% - 30vw);
+    border-radius: 5px;
+    padding: 10px;
+}
+.tagProfilePage .profileHeader .bio h1 {
+    font-size: 2.5em;
+    margin-inline-start: calc(10px + min(15vw, 125px));
+    overflow-wrap: break-word;
+    font-weight: bold;
+}
+.profileHeader .bio h1 .username {
+    font-size: 0.5em;
+    margin-left: 10px;
+    color: #aaa;
+}
+.profileHeader .actionBtn {
+    text-decoration: none;
+    color: white;
+    background-color: var(--secondary);
+    position: absolute;
+    top: calc(140px - 15px);
+    right: 5vw;
+    border-radius: 40px;
+    padding: 15px;
+    transition: background-color 0.2s;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+}
+.profileHeader .actionBtn:hover {
+    background-color: var(--secondary-500);
+}
+.profileHeader .actionBtn svg {
+    width: 30px;
+    height: 30px;
+}
+@media screen and (max-width: 600px) {
+    .profileHeader .actionBtn span {
+        display: none;
+    }
+}
+
+.journals {
+    position: relative;
+    min-height: calc(100vh - 350px - 71px);
+}
