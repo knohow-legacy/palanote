@@ -1,7 +1,7 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const ENDPOINT = 'http://localhost:3001/api';
+const ENDPOINT = 'http://20.231.52.165:8080/api';
 
 export interface RemixInfo {
     "allow-remix": boolean;
