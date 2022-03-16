@@ -20,7 +20,7 @@ function App() {
     return (
     <div className="app">
         <QueryClientProvider client={queryClient}>
-            <Router basename="/postit">
+            <Router>
                 <Sidebar />
                 <Routes>
                     <Route path="/" element={<Home />} />
