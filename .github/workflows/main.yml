@@ -27,7 +27,7 @@ jobs:
       - name: npm ci, postintstall, build, and test
         # Must install uglifyjs for rebuilding fabricjs, but don't want to include it in package.json
         run: |
-          npm install uglifyjs
+          npm install uglify-js
           npm ci
           npm postinstall --if-present
           npm run build --if-present
