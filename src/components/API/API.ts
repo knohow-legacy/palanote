@@ -23,10 +23,11 @@ export interface Journal {
 
 export interface PublishedJournal extends Journal {
     timestampCreated: number;
-    id: number;
+    id: string;
     authorID: string;
     likes: number;
     comments: Array<string>;
+    authenticated: boolean;
 }
 
 export interface User {
@@ -68,7 +69,8 @@ export class APIBase {
      * @param {string} journalId - The ID of the journal to fetch.
      * @returns user - Success, and the journal object if true.
      */
-     async fetchJournalById(journalId: string) : Promise<{success: false} | {success: true, journal: PublishedJournal}> {
+     async fetchJournalById(journalId: string) : Promise<void | PublishedJournal> {
+        if (!journalId) throw new Error('None specified');
 
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
@@ -78,12 +80,12 @@ export class APIBase {
         let resp = await axios.get(`${ENDPOINT}/fetch-journal-by-id/${journalId}`, {headers: headers}).catch(() => {});
         
         if (resp && resp.status === 200) {
-            return {success: true, journal: resp.data};
+            return resp.data;
         }
-        return {success: false};
+        throw new Error('Unable to fetch journal from server.')
     }
 
-    async fetchJournalsByUser(userId: string, offset=0, limit=5) {
+    async fetchJournalsByUser(userId: string, sortMode: string, offset=0, limit=5) {
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
@@ -141,7 +143,21 @@ export class APIBase {
         return {success: false};
     }
 
-    async fetchTagByQuery(tag: string, offset=0, limit=5) : Promise<any> {
+    async deleteJournalbyId(journalId: string) : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.delete(`${ENDPOINT}/delete-journal/${journalId}`, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return true;
+        }
+        return false;
+    }
+
+    async fetchTagByQuery(tag: string, sortMode: string, offset=0, limit=5) : Promise<any> {
         let headers : any = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
@@ -150,7 +166,7 @@ export class APIBase {
         let resp = await axios.post(`${ENDPOINT}/query-journals`, JSON.stringify({
             query: tag,
             fields: ['tags'],
-            sort: 'new',
+            sort: sortMode,
             page: offset,
             remix: true
         }), {headers: headers}).catch(() => {});

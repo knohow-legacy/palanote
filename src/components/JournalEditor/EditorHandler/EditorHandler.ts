@@ -1,4 +1,4 @@
-import { FabricJSEditor } from 'fabricjs-react';
+import { FabricJSCanvas, FabricJSEditor } from 'fabricjs-react';
 import { PSBrush, PSBrushIface } from "@arch-inc/fabricjs-psbrush";
 import { fabric } from 'fabric';
 
@@ -135,14 +135,17 @@ export default class EditorHandler {
 
 
     // Drafts
-    loadDraft(draft : Journal) {
+    async loadDraft(draft : Journal, isRemix: boolean) {
         if (!this.editor) return;
         // something
+        await new Promise((resolve) => this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), resolve))
+        
+        this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
     }
 
     saveDraft() {
         const journal : Journal = {
-            content: {data: encodeURIComponent(this.editor.canvas.toSVG())},
+            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
             topics: this.topics,
             title: this.title || "Untitled Journal",
             remixInfo: this.remixInfo,
@@ -155,7 +158,7 @@ export default class EditorHandler {
 
     postJournal() {
         const journal : Journal = {
-            content: {data: encodeURIComponent(this.editor.canvas.toSVG())},
+            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
             topics: this.topics,
             title: this.title || "Untitled Journal",
             remixInfo: this.remixInfo,

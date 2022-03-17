@@ -1,4 +1,4 @@
-import { FindInPage, PersonSearch, Search, Tag } from '@mui/icons-material';
+import { FindInPage, PersonSearch, Tag } from '@mui/icons-material';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import '../SearchBar.css';
@@ -16,7 +16,7 @@ function SearchBar({query} : {query: string}) {
             </NavLink>}
             <NavLink to={`/search/user/${query}`} key="person" className="autocompleteItem">
                 <PersonSearch />
-                <span>Search for user <b>{query}</b></span>
+                <span>Search for journals by user <b>{query}</b></span>
             </NavLink>
             <NavLink to={`/search/journal/${query}`} key="title" className="autocompleteItem">
                 <FindInPage />

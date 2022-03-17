@@ -1,5 +1,5 @@
 import React from 'react';
-import './Compose.css';
+import './TagInput.css';
 import { Tag } from '@mui/icons-material';
 
 function TagInput({tags, setTags, maxTags=5} : any) {

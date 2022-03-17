@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useGoogleLogout } from 'react-google-login';
+import { GoogleLogout } from 'react-google-login';
 import { Authentication } from '../../components/Authentication/Authentication';
 
 import Header from '../../components/Header/Header';
@@ -8,18 +8,13 @@ import Header from '../../components/Header/Header';
 function Settings() {
     const [logoutState, setLogoutState] = React.useState(!Authentication.isLoggedIn);
 
-    function LogOut() {
-        useGoogleLogout({
-            clientId: Authentication.clientId,
-            onLogoutSuccess: () => {
-                Authentication.onLogoutSuccess();
-                setLogoutState(true);
-            },
-            onFailure: () => {
-                Authentication.onLogoutFailure();
-                setLogoutState(false);
-            }
-        })
+    const success = () => {
+        Authentication.onLogoutSuccess();
+        setLogoutState(true);
+    }
+    const error = () => {
+        Authentication.onLogoutFailure();
+        setLogoutState(false);
     }
     
 
@@ -28,8 +23,14 @@ function Settings() {
     }
 
     return (
-        <div onClick={LogOut} className="page settings">
+        <div className="page settings">
             <Header name="Settings" />
+            <GoogleLogout
+                clientId={Authentication.clientId}
+                buttonText="Log Out"
+                onLogoutSuccess={success}
+                onFailure={error}
+            />
         </div>
     );
 }

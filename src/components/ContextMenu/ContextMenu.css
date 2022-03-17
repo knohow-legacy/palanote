@@ -1,0 +1,56 @@
+.contextMenu {
+    position: relative;
+}
+.contextMenu:not(.opened) .contextMenuItems {
+    display: none;
+}
+.contextMenu.opened {
+    background-color: #999 !important;
+}
+.contextMenu.opened .contextMenuItems {
+    width: 300%;
+    margin: 10px 0;
+    position: absolute;
+    background-color: #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #000;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    overflow: hidden;
+    
+    animation: contextMenuOpen 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    animation-fill-mode: forwards;
+}
+.contextMenuItem {
+    display: flex;
+    font-size: 1em !important;
+    padding: 5px;
+    border-radius: 5px;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+
+    user-select: none;
+}
+.contextMenuItem.danger {
+    color: red;
+}
+.contextMenuItem:hover {
+    background-color: #aaa;
+}
+.contextMenuItem.danger:hover {
+    background-color: #f00;
+    color: white;
+}
+
+@keyframes contextMenuOpen {
+    from {
+        height: 0;
+    }
+    to {
+        height: 300%;
+    }
+}

@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 
 import Home from './pages/home/Home';
 import Compose from './pages/compose/Compose';
+import Remix from './pages/remix/Remix';
 import Login from './pages/login/Login';
 import Settings from './pages/settings/Settings';
 import Search from './pages/search/Search';
@@ -24,7 +25,13 @@ function App() {
                 <Sidebar />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/compose" element={<Compose />} />
+                    <Route path="/compose">
+                        <Route index element={<Compose />} />
+                        <Route path=":journalId" element={<Compose />} />
+                    </Route>
+                    <Route path="/remix">
+                        <Route path=":journalId" element={<Remix />} />
+                    </Route>
                     <Route path="/search">
                         <Route index element={<Search />} />
                         <Route path="/search/tag">

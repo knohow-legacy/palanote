@@ -9,12 +9,15 @@
     background-color: #ddd;
     border-radius: 5px 5px 0 0;
 }
+.journalActions a {
+    text-decoration: none;
+    color: black;
+}
 .journalActions .author {
     border: 1px solid #ccc;
     padding-left: 5px;
     margin-right: 10px;
     flex-grow: 1;
-    text-decoration: none;
     color: #333;
     border-radius: 100px 10px 10px 100px;
 

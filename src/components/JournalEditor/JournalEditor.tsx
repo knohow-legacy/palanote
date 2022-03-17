@@ -7,7 +7,7 @@ import JournalToolbar from './JournalToolbar/JournalToolbar';
 import EditorHandler from './EditorHandler/EditorHandler';
 import Loading from '../Loading/Loading';
 
-function JournalEditor({titleRef, tags, draft} : {titleRef : any, tags : any, draft? : any}) {
+function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef : any, tags : any, draft? : any, isRemix : boolean}) {
     let { editor, onReady } : any = useFabricJSEditor();
     let [editorHandler, setEditorHandler] = React.useState<EditorHandler | null>(null);
     let [isLoading, setIsLoading] = React.useState(false);
@@ -48,9 +48,9 @@ function JournalEditor({titleRef, tags, draft} : {titleRef : any, tags : any, dr
         //inputRef.current.addEventListener('keyup', saveTitle);
         
         if (draft) {
-            editorHandler.loadDraft(draft);
+            editorHandler.loadDraft(draft, isRemix);
         } else {
-            editor.canvas.setDimensions({width: 500, height: 1000});
+            editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
         }
         resizeCanvas();
 
