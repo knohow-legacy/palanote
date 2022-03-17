@@ -8,7 +8,7 @@ function LoginPrompt({authState, setAuthState} : any) {
 
     const success = (response:any) => {
         Authentication.onLoginSuccess.call(Authentication, response).then(
-            (success:boolean) => {setAuthState('success')});
+            (success:boolean) => {setAuthState(success ? 'success' : 'error')});
     }
     const error = (response:any) => {
         Authentication.onLoginFailure.call(Authentication, response)
@@ -27,7 +27,7 @@ function LoginPrompt({authState, setAuthState} : any) {
                 responseType="code"
                 cookiePolicy={'single_host_origin'}
             />
-            {authState === 'error' && <p className="error"><Error /> Something went wrong. Please try again.</p>}
+            {authState === 'error' && <p className="errorMsg"><Error /> Something went wrong on our end. Please try again.</p>}
         </div>
     );
 }

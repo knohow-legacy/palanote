@@ -1,7 +1,7 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const ENDPOINT = 'https://20.231.52.165:8080/api';
+const ENDPOINT = 'https://knohow.azurewebsites.net/api';
 
 export interface RemixInfo {
     "allow-remix": boolean;

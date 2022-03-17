@@ -145,7 +145,7 @@ const tools = [
                 let resp = await editor.postJournal();
 
                 if (resp.success) {
-                    window.location.pathname = `/journal/${resp.journalID}`;
+                    window.location.hash = `#/journal/${resp.journalID}`;
                 }
             }
         }

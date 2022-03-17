@@ -9,7 +9,7 @@
     flex-direction: column;
     align-items: center;
 }
-.loginPrompt .error {
+.loginPrompt .errorMsg {
     color: var(--primary-900);
     display: flex;
     gap: 10px;

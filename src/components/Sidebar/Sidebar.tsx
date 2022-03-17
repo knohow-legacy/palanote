@@ -43,7 +43,7 @@ function Sidebar() {
 
     // change active index when location updates
     React.useEffect(() => {
-        const curPath = window.location.pathname.split('/')[1];
+        const curPath = location.pathname.split('/')[1];
         const activeItem = sideBarItems.findIndex(item => item.path.substring(1) === curPath);
         setActiveIndex(curPath.length === 0 ? 0 : activeItem);
     }, [location]);
