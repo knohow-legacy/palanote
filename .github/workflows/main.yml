@@ -29,8 +29,7 @@ jobs:
         run: |
           npm install uglify-js
           npm ci
-          npm run build --if-present
-          npm run test --if-present
+          CI='' npm run build
 
       - name: deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
