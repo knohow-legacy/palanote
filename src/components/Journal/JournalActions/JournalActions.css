@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap;
     
     position: sticky;
     bottom: 0px;
@@ -9,6 +10,17 @@
     background-color: #ddd;
     border-radius: 5px 5px 0 0;
 }
+
+@media screen and (max-width: 800px) {
+    .journalActions > * {
+        margin-bottom: 10px
+    }
+    .journalActions .sharing {
+        border-left: none !important;
+        padding-left: 0 !important;
+    }
+}
+
 .journalActions a {
     text-decoration: none;
     color: black;
@@ -38,6 +50,24 @@
     overflow: hidden;
     background-color: #aaa;
 }
+.journalActions .followBtn {
+    height: 100%;
+    background-color: var(--secondary);
+    color: white;
+    cursor: pointer;
+
+    float: right;
+    padding: 0 10px;
+    margin-left: auto;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.journalActions .followBtn.following {
+    background-color: #aaa;
+}
 .journalActions .sharing {
     border-left: 1px solid #ccc;
     display: flex;
@@ -49,6 +79,16 @@
 }
 .journalActions > .sharing > *:hover {
     background-color: #aaa;
+}
+.journalActions > .sharing > .disabled {
+    color: #aaa;
+    background-color: transparent !important;
+    fill: #aaa;
+    cursor: not-allowed
+}
+.journalActions > .sharing > .liked {
+    fill: var(--primary-900);
+    color: var(--primary-900);
 }
 .journalActions > .sharing > * {
     cursor: pointer;

@@ -39,7 +39,7 @@
     margin-left: 10px;
     color: #aaa;
 }
-.profileHeader .editProfile {
+.profileHeader .actionBtn {
     text-decoration: none;
     color: white;
     background-color: var(--secondary);
@@ -50,21 +50,30 @@
     padding: 15px;
     transition: background-color 0.2s;
 
+    cursor: pointer;
+    user-select: none;
+
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
     font-size: 20px;
 }
-.profileHeader .editProfile:hover {
+.profileHeader .actionBtn:hover {
     background-color: var(--secondary-500);
 }
-.profileHeader .editProfile svg {
+.actionBtn.following {
+    background-color: #777;
+}
+.actionBtn.following:hover {
+    background-color: var(--primary-900);
+}
+.profileHeader .actionBtn svg {
     width: 30px;
     height: 30px;
 }
 @media screen and (max-width: 600px) {
-    .profileHeader .editProfile span {
+    .profileHeader .actionBtn span {
         display: none;
     }
 }

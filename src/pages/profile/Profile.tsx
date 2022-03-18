@@ -20,6 +20,12 @@ function Profile() {
 
     if (!userId && !Authentication.isLoggedIn) return (<Navigate to="/" />);
 
+    if (result.status === 'error' && !userId) {
+      // User can't access their own page- try logging them out
+      Authentication.onLogoutSuccess();
+      return (<Navigate to="/" />);
+    }
+
     return (
       <div className="page profile">
         {result.status === 'error' && <Error text="Something went wrong loading this." />}

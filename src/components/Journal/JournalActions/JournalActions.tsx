@@ -1,15 +1,33 @@
 import React from 'react';
-import { Comment, Favorite, AutoMode, MoreVert, Delete, Edit } from '@mui/icons-material';
-import { NavLink } from 'react-router-dom';
+import { Comment, Favorite, AutoMode, MoreVert, Delete, Edit, Add, Remove } from '@mui/icons-material';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { PublishedJournal, User, API } from '../../API/API';
 import './JournalActions.css';
 import ContextMenu from '../../ContextMenu/ContextMenu';
 import { ContentCopy } from '@mui/icons-material';
 
-function JournalActions({journal, userData} : {journal: PublishedJournal, userData: User | string}) {
-    function preventDefault(e:any) {
-        e.preventDefault()
+function JournalActions({toJournal, journal, userData} : {toJournal: any, journal: PublishedJournal, userData: User | string}) {
+    const [isFollowing, setIsFollowing] = React.useState<null | boolean>(null);
+    const [isLiked, setIsLiked] = React.useState<boolean>(journal.isLiked);
+    
+    const navigate = useNavigate();
+
+    async function toggleFollowing(e:any) {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFollowing(!isFollowing);
+        setIsFollowing(await API.followUser(typeof userData === 'string' ? userData : userData.id));
     }
+
+    async function toggleLike(e:any) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!journal.authenticated) {
+            setIsLiked(!isLiked);
+            setIsLiked(await API.likeJournal(journal.id));
+        }
+    }
+    
     function stopPropagation(e:any) {
         e.stopPropagation()
     }
@@ -43,7 +61,11 @@ function JournalActions({journal, userData} : {journal: PublishedJournal, userDa
                 onClick: async (e:any) => {
                     let result = await API.deleteJournalbyId(journal.id);
                     if (result) {
-                        window.location.reload();
+                        if (window.location.href.includes("/journal/")) {
+                            navigate('/', {replace: true});
+                        } else {
+                            window.location.reload();
+                        }
                     } else {
                         alert('Failed to delete journal.');
                     }
@@ -59,6 +81,8 @@ function JournalActions({journal, userData} : {journal: PublishedJournal, userDa
             username: '',
             pfp: '',
             timestampCreated: 0,
+            authenticated: true,
+            isFollowing: null
         }
     } else if (typeof userData === 'string') {
         // error
@@ -67,14 +91,19 @@ function JournalActions({journal, userData} : {journal: PublishedJournal, userDa
             username: '[Deleted]',
             pfp: '',
             timestampCreated: 0,
+            authenticated: true,
+            isFollowing: null
         }
     } else {
         user = userData;
+        if (isFollowing === null) {
+            setIsFollowing(user.isFollowing);
+        }
     }
     
     return (
         <div className="journalActions">
-            <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? preventDefault : () => {}} className="author">
+            <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? stopPropagation : () => {}} className="author">
                 <img className="authorPfp" src={user.pfp} alt={
                     user.username
                 } />
@@ -82,13 +111,17 @@ function JournalActions({journal, userData} : {journal: PublishedJournal, userDa
                     <div className="authorName">{user.username}</div>
                     <span className="authorFollowers">{user.followers} followers</span>
                 </div>
+                {!user.authenticated && <div onClick={toggleFollowing} className={isFollowing ? "followBtn following" : "followBtn"}>
+                    {isFollowing && <React.Fragment><Remove /><span>Unfollow</span></React.Fragment>}
+                    {!isFollowing && <React.Fragment><Add /><span>Follow</span></React.Fragment>}
+                </div>}
             </NavLink>
             <div className="sharing" onClick={stopPropagation}>
-                <div className="favorite">
+                <div className={"like" + (isLiked ? " liked" : journal.authenticated ? " disabled" : "")} onClick={toggleLike}>
                     <Favorite />
-                    <span>{journal.likes}</span>
+                    <span>{isLiked ? journal.likes + 1 : journal.likes}</span>
                 </div>
-                <div className="comments">
+                <div className="comments" onClick={toJournal}>
                     <Comment />
                     <span>{journal.comments}</span>
                 </div>

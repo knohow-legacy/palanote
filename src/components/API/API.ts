@@ -28,6 +28,7 @@ export interface PublishedJournal extends Journal {
     likes: number;
     comments: Array<string>;
     authenticated: boolean;
+    isLiked: boolean;
 }
 
 export interface User {
@@ -40,6 +41,16 @@ export interface User {
     //followerCount: number;
     //followingCount: number;
     timestampCreated: number;
+    authenticated: boolean;
+    isFollowing: boolean; // Is the user following this user?
+}
+export interface Comment {
+    user: string;
+    content: string;
+    pinned: boolean;
+    heart: boolean;
+    timestamp: number;
+    id: string;
 }
 
 export const DefaultUser = {
@@ -64,6 +75,18 @@ export class APIBase {
         return {success: false};
     }
 
+    async fetchHome(sortMode: string, offset=0, limit=5) : Promise<Array<PublishedJournal>> {
+        let headers : any = { 'Accept': 'application/json', 'Authorization': `Bearer ${Authentication.token}` };
+        
+        let resp = await axios.get(`${ENDPOINT}/fetch-user-feed/${offset}`, {headers: headers}).catch(() => {});
+        
+        if (resp) {
+            return (resp as any).data;
+        } else {
+            throw new Error('Could not fetch journals from the server. :/');
+        }
+    }
+
     /**
      * Fetches a journal by ID.
      * @param {string} journalId - The ID of the journal to fetch.
@@ -83,6 +106,39 @@ export class APIBase {
             return resp.data;
         }
         throw new Error('Unable to fetch journal from server.')
+    }
+
+    async fetchJournalComments(journalId: string) : Promise<Array<Comment>> {
+        if (!journalId) throw new Error('None specified');
+
+        let headers : any = { 'Accept': 'application/json' };
+        if (Authentication.isLoggedIn) {
+            headers['Authorization'] = `Bearer ${Authentication.token}`;
+        }
+        
+        let resp = await axios.get(`${ENDPOINT}/fetch-journal-comments/${journalId}`, {headers: headers}).catch(() => {});
+        
+        if (resp && resp.status === 200) {
+            return resp.data;
+        }
+        throw new Error('Unable to fetch journal from server.')
+    }
+
+    async postComment(journalId: string, content: string) : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.post(`${ENDPOINT}/comment`, {
+            journalID: journalId,
+            comment: content
+        }, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data.success;
+        }
+        throw new Error('Cannot comment');
     }
 
     async fetchJournalsByUser(userId: string, sortMode: string, offset=0, limit=5) {
@@ -143,6 +199,31 @@ export class APIBase {
         return {success: false};
     }
 
+    async patchJournal(journal: PublishedJournal) : Promise<{success: false} | {success: true, journalID: string}> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp =  await axios.patch(`${ENDPOINT}/update-journal`, JSON.stringify({
+            journalID: journal.id,
+            title: journal.title,
+            topics: journal.topics,
+            content: {
+                data: journal.content.data
+            },
+            isDraft: journal.isDraft,
+            visibility: journal.visibility
+        }), {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+                'Content-Type': 'application/json'
+            }
+        }).catch(() => {});
+
+        if (resp && resp.status === 200) {
+            return {success: true, journalID: resp.data.JournalID};
+        }
+        return {success: false};
+    }
+
     async deleteJournalbyId(journalId: string) : Promise<boolean> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
@@ -155,6 +236,56 @@ export class APIBase {
             return true;
         }
         return false;
+    }
+
+    async followUser(userId: string) : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.post(`${ENDPOINT}/follow`, {
+            "follow-type": "user",
+            "data-entry": userId
+        }, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data.isNowFollowed;
+        }
+        throw new Error('Cannot follow user');
+    }
+
+    async followTopic(topic: string) : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.post(`${ENDPOINT}/follow`, {
+            "follow-type": "topic",
+            "data-entry": topic
+        }, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data.isNowFollowed;
+        }
+        throw new Error('Cannot follow user');
+    }
+
+    async likeJournal(journalId: string) : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.post(`${ENDPOINT}/like`, {
+            journalID: journalId
+        }, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data.isNowLiked;
+        }
+        throw new Error('Cannot like post');
     }
 
     async fetchTagByQuery(tag: string, sortMode: string, offset=0, limit=5) : Promise<any> {

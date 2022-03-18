@@ -1,5 +1,5 @@
 .tagInput {
-    width: 100%;
+    width: 100% !important;
     position: absolute;
     left: 0;
     top: -5px;

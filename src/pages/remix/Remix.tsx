@@ -15,7 +15,9 @@ function Remix() {
     const { journalId } = useParams();
     const titleRef = React.useRef(null);
     const [tags, setTags] = React.useState<string[]>([]);
-    const result = useQuery(`journal-${journalId}`, async () => await API.fetchJournalById(journalId || ""));
+    const result = useQuery(`journal-${journalId}`, async () => await API.fetchJournalById(journalId || ""), {
+        enabled: !!journalId && Authentication.isLoggedIn
+    });
     
     if (!Authentication.isLoggedIn) {
         return (<Navigate to="/login" />);

@@ -13,6 +13,9 @@
 
     transition: width 0.2s;
 }
+.sidebar-wrapper {
+    min-height: 100vh;
+}
 .sidebar .brandHome, .sidebar .brandHome h1 {
     text-decoration: none;
     color: black;
@@ -87,6 +90,9 @@
     .sidebar .item {
         padding: 10px;
     }
+    .sidebar .item svg {
+        margin-right: 0;
+    }
     .sidebar .item span {
         display: none;
     }
@@ -94,3 +100,35 @@
         display: none;
     }
 }
+
+@media screen and (max-width: 800px) {
+    .sidebar-wrapper {
+        min-height: unset;
+        min-width: 100vw;
+    }
+    .sidebar .item {
+        padding: 10px;
+    }
+    .sidebar .brandHome {
+        display: none;
+    }
+    .sidebar {
+        background-color: #fff;
+        position: fixed;
+        top: unset;
+        bottom: 0;
+        left: 0;
+    
+        height: unset;
+        width: calc(100vw - 20px) !important;
+
+        flex-direction: row;
+        justify-content: center;
+        gap: 30px;
+        padding: 10px;
+
+        transition: unset;
+        
+        z-index: 99;
+    }
+  }

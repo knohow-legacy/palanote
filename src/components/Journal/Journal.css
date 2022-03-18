@@ -35,6 +35,10 @@
     height: 100%;
 
 }
+.journal .journalSvg {
+    position: relative;
+    min-height: 300px;
+}
 .journal .journalSvg svg {
     background-color: #fff;
     width: 100% !important;

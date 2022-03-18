@@ -204,7 +204,7 @@ function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandle
                             tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
                         }}>
                         {tool.props.icon}
-                        <span>{tool.props.title}</span>
+                        <span>{editorHandler.isRemix ? 'Remix' : editorHandler.draft ? 'Update' : 'Post'}</span>
                     </div>
                 );
             case 'HandwritingTool':

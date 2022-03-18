@@ -48,6 +48,21 @@ code {
   align-items: stretch;
 }
 
+@media screen and (max-width: 800px) {
+  .app {
+    flex-direction: column-reverse;
+    overflow-y: hidden;
+    height: 100vh;
+  }
+  .sidebar-wrapper {
+    height: 70px;
+  }
+  .page {
+    overflow-y: auto;
+    height: calc(100vh - 70px);
+  }
+}
+
 .page {
   flex-grow: 1;
   position: relative;

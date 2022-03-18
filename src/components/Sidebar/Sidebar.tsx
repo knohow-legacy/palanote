@@ -50,7 +50,7 @@ function Sidebar() {
 
     // Need an outer div for flexbox, and then the inner div for sticky support
     return (
-        <div style={{minHeight: "100vh"}}>
+        <div className="sidebar-wrapper">
             <div className={"sidebar" + (isMinimized ? " minimized" : "")}>
                 <NavLink to="/" className="brandHome">
                     <h1>PostIt</h1>

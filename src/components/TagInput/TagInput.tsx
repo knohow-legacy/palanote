@@ -2,7 +2,12 @@ import React from 'react';
 import './TagInput.css';
 import { Tag } from '@mui/icons-material';
 
-function TagInput({tags, setTags, maxTags=5} : any) {
+function TagInput({defaultTags = [], tags, setTags, maxTags=5} : any) {
+    
+    // On first run, set the tags to default
+    React.useEffect(() => {
+        setTags(defaultTags);
+    }, [])
 
     function validKey(keyCode: number, shiftKey: boolean) {
         return (

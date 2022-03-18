@@ -2,8 +2,10 @@ import React from 'react';
 import './Home.css';
 import { Navigate } from 'react-router-dom';
 import { Authentication } from '../../components/Authentication/Authentication';
+import { API } from '../../components/API/API';
 
 import Header from '../../components/Header/Header';
+import JournalList from '../../components/JournalList/JournalList';
 
 function Home() {
   if (!Authentication.isLoggedIn) {
@@ -13,7 +15,11 @@ function Home() {
   return (
     <div className="page home">
       <Header name="Home" />
-      <span>code something</span>
+      <div style={{padding: 10}}>
+        <h1>Welcome home</h1>
+        <p>Your followed users and topics will show up here.</p>
+      </div>
+      <JournalList key='home' fetchRoute={API.fetchHome.bind(API)} fetchArgs={[]} />
     </div>
   );
 }

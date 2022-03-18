@@ -1,8 +1,8 @@
-import { FabricJSCanvas, FabricJSEditor } from 'fabricjs-react';
+import { FabricJSEditor } from '../../../fabricjs-react/index';
 import { PSBrush, PSBrushIface } from "@arch-inc/fabricjs-psbrush";
 import { fabric } from 'fabric';
 
-import { Journal, API, RemixInfo } from '../../API/API';
+import { Journal, API, RemixInfo, PublishedJournal } from '../../API/API';
 
 /*
 Fabric typings apparently don't support EraseBrush (a module, see npm run-script postinstall),
@@ -46,16 +46,18 @@ export default class EditorHandler {
     };
 
     visibility: 'public' | 'unlisted' | 'private' = 'public';
-    isDraft: boolean = false;
+    draft: null | PublishedJournal = null;
+    isRemix = false;
+
     remixInfo: RemixInfo = {
         "allow-remix": true,
         "is-remix": false,
         "original-journal-id": "0",
-        remixes: 0,
+        "remixes": 0,
         "remix-chain": 0
     };
     topics : string[] = [];
-    title: string = 'Untitled Journal';
+    title: string = '';
 
     currentTool : Tool = 'select';
     settings : {[key:string]:BrushSettings} = {
@@ -98,14 +100,26 @@ export default class EditorHandler {
         this.editor.canvas.uniformScaling = true;
 
         this.editor.canvas.on("object:added", (e) => {
-            if (!(e.target as any)?.undone && !(e.target as any)?.redone) {
+            if (!(e.target as any)?.undone && !(e.target as any)?.redone && (!(e.target as any)?.remixed && !(e.target as any)?.modified)) {
                 // Only update history on new items, not undone/redone items
                 this.redoHistory = [];
                 this.undoHistory.push({type: e.target?.type, target: e.target?.saveState()});
+                
+                // remove old items after a while
+                if (this.undoHistory.length > 100) this.undoHistory.shift();
             }
 
             this.sortByOpacity();
             this.notify('update')
+        })
+
+        this.editor.canvas.on("object:modified", ({e, action, transform, target}:any) => {
+            target._objects.forEach((obj:any) => {
+                if (obj.remixed && !obj.modified) {
+                    obj.opacity = obj.opacity * 2;
+                    obj.modified = true;
+                }
+            })
         })
 
         this.editor.canvas.on("erasing:end", ({targets, drawables}:any) => {
@@ -135,37 +149,80 @@ export default class EditorHandler {
 
 
     // Drafts
-    async loadDraft(draft : Journal, isRemix: boolean) {
+    async loadDraft(draft : PublishedJournal, isRemix: boolean) {
         if (!this.editor) return;
+        this.draft = draft;
+        this.isRemix = isRemix;
+        this.setVisibility(draft.visibility);
+
+        if (isRemix) {
+            this.remixInfo['original-journal-id'] = draft.id;
+            this.remixInfo['allow-remix'] = true;
+            this.remixInfo['is-remix'] = true;
+            this.remixInfo.remixes = 0;
+            this.remixInfo['remix-chain']++;
+        }
+
         // something
         await new Promise((resolve) => this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), resolve))
-        
-        this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
-    }
-
-    saveDraft() {
-        const journal : Journal = {
-            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
-            topics: this.topics,
-            title: this.title || "Untitled Journal",
-            remixInfo: this.remixInfo,
-            visibility: this.visibility,
-            isDraft: true
+        if (isRemix) {
+            this.editor.canvas._objects.forEach((obj:any) => {
+                obj['remixed'] = true;
+                obj.opacity = obj.opacity / 2;
+            })
         }
         
-        return API.uploadJournal(journal);
+        //this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
     }
 
-    postJournal() {
+    saveDraft() : Promise<{success: false} | {success: true; journalID: string}> {
+        if (!this.draft) return this.postJournal();
+
+        const journal : any = {
+            id: this.draft.id,
+            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
+            topics: this.topics,
+            title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
+            remixInfo: this.remixInfo,
+            visibility: this.visibility,
+            isDraft: this.draft.isDraft
+        }
+        
+        return API.patchJournal(journal);
+    }
+
+    postJournal() : Promise<{success: false} | {success: true; journalID: string}> {
+        if (!this.isRemix && this.draft) return this.saveDraft();
+
+        // scale journal properly (width: 1240)
+        const width = this.editor.canvas.getWidth();
+        const height = this.editor.canvas.getHeight();
+        const targetWidth = 1240;
+
+
+        this.editor.canvas._objects.forEach((obj:any) => {
+            if (obj['remixed']) {
+                obj.opacity = (obj.opacity || 0.5) * 2;
+            }
+
+            obj.scaleX /= (width / (targetWidth || 1))
+            obj.scaleY /= (width / (targetWidth || 1))
+            obj.left /= (width / (targetWidth || 1))
+            obj.top /= (width / (targetWidth || 1))
+            obj.setCoords();
+        })
+        this.editor.canvas.setDimensions({width: targetWidth, height: height / (width / (targetWidth || 1))}); // A4 / 2
+
         const journal : Journal = {
             content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
             topics: this.topics,
-            title: this.title || "Untitled Journal",
+            title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
             visibility: this.visibility,
             isDraft: false
         }
         
+        // If draft but not remix, update it instead of making a new object
         return API.uploadJournal(journal);
     }
 
