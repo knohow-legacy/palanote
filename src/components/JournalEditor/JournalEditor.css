@@ -27,6 +27,7 @@
     top: 0px;
     height: 50px;
     z-index: 96;
+    user-select: none;
 
     display: flex;
     flex-direction: row;

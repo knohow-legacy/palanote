@@ -15,7 +15,7 @@ const FabricJSCanvas = ({ className, dimensions, onReady }: Props) => {
   const canvasEl = useRef(null)
   const canvasElParent = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const canvas = new fabric.Canvas(canvasEl.current, {width: dimensions.width, height: dimensions.height})
+    const canvas = new fabric.Canvas(canvasEl.current, {width: dimensions.width, height: dimensions.height, enablePointerEvents: true} as any)
     const setCurrentDimensions = () => {
       // The reason this wasn't just installed from NPM is because I needed to modify
       // the dimension scaling code to fit our purposes.
