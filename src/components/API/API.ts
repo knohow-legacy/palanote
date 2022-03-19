@@ -149,7 +149,7 @@ export class APIBase {
         }
 
         // react-query can handle errors
-        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}/${offset}`, {headers}).catch(() => {});
+        let resp = await axios.get(`${ENDPOINT}/fetch-journals-by-author-id/${userId}/${offset}/${sortMode}/${remixMode}`, {headers}).catch(() => {});
         
         if (resp) {
             return (resp as any).data;
