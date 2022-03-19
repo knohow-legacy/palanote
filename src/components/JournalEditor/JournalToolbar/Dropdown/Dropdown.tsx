@@ -10,8 +10,8 @@ import './Dropdown.css';
     key: "",
 } 
 */
-function Dropdown({title, onClick, items, isSelected, editorHandler} : any) {
-    const [visibility, setVisibility] = React.useState(editorHandler.visibility);
+function Dropdown({title, onClick, items, isSelected, editorHandler, initial} : any) {
+    const [visibility, setVisibility] = React.useState(initial(editorHandler));
     const [isOpened, setOpened] = React.useState(false);
 
     let selected = items.find((item:any) => item.key === visibility)

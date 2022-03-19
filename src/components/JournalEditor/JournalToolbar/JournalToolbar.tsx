@@ -1,7 +1,7 @@
 import React from 'react';
 import '../JournalEditor.css';
 
-import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Undo, Redo, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Undo, Redo, Visibility, VisibilityOff, TouchApp, PanTool, DoNotTouch } from '@mui/icons-material';
 import EditorHandler from '../EditorHandler/EditorHandler';
 import Dropdown from './Dropdown/Dropdown';
 import HandwritingTool from './HandwritingTool/HandwritingTool';
@@ -107,8 +107,35 @@ const tools = [
     {
         type: 'dropdown',
         props: {
+            title: 'Enable touch',
+            tool: 'touch',
+            initial: (editor: EditorHandler) => editor.psBrush.disableTouch ? 'touch-disabled' : 'touch-enabled',
+            items: [
+                {
+                    title: 'Enabled',
+                    description: 'Touches will be used for input',
+                    icon: <PanTool />,
+                    key: 'touch-enabled',
+                },
+                {
+                    title: 'Disabled',
+                    description: 'Touches will be used for scrolling',
+                    icon: <DoNotTouch />,
+                    key: 'touch-disabled',
+                }
+            ],
+            icon: <PanTool />,
+            onClick: (editor: EditorHandler, selectedKey: any, isLoading:boolean, setIsLoading:any) => {
+                editor.psBrush.disableTouch = selectedKey === 'touch-disabled';
+            }
+        }
+    },
+    {
+        type: 'dropdown',
+        props: {
             title: 'Set visibility',
             tool: 'divider',
+            initial: (editor: EditorHandler) => editor.visibility,
             items: [
                 {
                     title: 'Public',
