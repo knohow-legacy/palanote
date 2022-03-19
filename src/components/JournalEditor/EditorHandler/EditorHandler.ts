@@ -361,7 +361,7 @@ export default class EditorHandler {
             } else {
                 brush.pressureManager.min = 1;
             }
-            brush.width = this.settings[tool].width;
+            brush.width = this.settings[tool].width * 4;
             brush.color = this.settings[tool].color;
             brush.opacity = this.settings[tool].opacity;
         }

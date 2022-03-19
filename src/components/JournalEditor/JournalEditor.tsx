@@ -45,6 +45,7 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
 
     return (
         <div ref={ref} className="journalEditor">
+            <div className="screenTooSmall"><h2>Your screen is too small to write notes.</h2><p>Writing journals is only supported on desktop and tablet devices.</p></div>
             {isLoading && (<Loading />)}
             {editorHandler && <JournalToolbar isLoading={isLoading} setIsLoading={setIsLoading} editorHandler={editorHandler} />}
             <FabricJSCanvas dimensions={{width: 1240, height: 1754}} className="journalCanvas" onReady={onReady} />
