@@ -168,7 +168,6 @@ export default class EditorHandler {
         // load
         await new Promise<void>((resolve) => {
             this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), () => resolve(), (o:any, object:any) => {
-                console.log(object);
                 if (isRemix) {
                     object['remixed'] = true;
                     object.opacity = object.opacity / 2;

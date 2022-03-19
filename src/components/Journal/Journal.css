@@ -12,6 +12,34 @@
     margin-top: 0;
     margin-bottom: 5px;
 }
+.journal h2 .remix {
+    display: inline-block;
+    margin-left: 10px;
+    text-decoration: none;
+    color: black;
+    overflow-wrap: break-word;
+    border: 1px solid #777;
+    background-color: var(--primary);
+    padding: 2px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+.journal h2 .remix svg {
+    vertical-align: text-bottom;
+    margin: 0 5px;
+}
+.journal h2 .remix:hover svg {
+    /* animate on hover */
+    animation: rotate 0.5s;
+}
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
 .journal .topics {
     display: flex;
     margin: 5px 0;

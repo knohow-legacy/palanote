@@ -1,0 +1,23 @@
+.sortingOptions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: calc(100% - 2rem);
+    align-items: center;
+    margin: 1rem;
+    gap: 10px;
+}
+.sortingOptions .contextMenu {
+    font-size: 20px;
+}
+.sortingOptions .contextMenu p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.sortingOptions .contextMenu {
+    background-color: #ccc;
+    border-radius: 5px;
+    padding: 10px 20px;
+}

@@ -1,5 +1,7 @@
 .contextMenu {
     position: relative;
+    user-select: none;
+    cursor: pointer;
 }
 .contextMenu:not(.opened) .contextMenuItems {
     display: none;
@@ -8,7 +10,7 @@
     background-color: #999 !important;
 }
 .contextMenu.opened .contextMenuItems {
-    width: 300%;
+    min-width: calc(100% - 20px);
     margin: 10px 0;
     position: absolute;
     background-color: #ccc;
@@ -20,9 +22,15 @@
     flex-direction: column;
     justify-content: space-around;
     overflow: hidden;
-    
-    animation: contextMenuOpen 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    z-index: 40;
     animation-fill-mode: forwards;
+}
+.contextMenu.up.opened .contextMenuItems {
+    animation: contextMenuOpenUp 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.contextMenu.down.opened .contextMenuItems {
+    animation: contextMenuOpenDown 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .contextMenuItem {
     display: flex;
@@ -30,6 +38,7 @@
     padding: 5px;
     border-radius: 5px;
     flex-direction: row;
+    white-space: nowrap;
     align-items: center;
     gap: 5px;
 
@@ -46,11 +55,23 @@
     color: white;
 }
 
-@keyframes contextMenuOpen {
+@keyframes contextMenuOpenUp {
     from {
-        height: 0;
+        transform: translateY(20%);
+        opacity: 0;
     }
     to {
-        height: 300%;
+        transform: 0;
+        opacity: 1;
+    }
+}
+@keyframes contextMenuOpenDown {
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+    to {
+        transform: 0;
+        opacity: 1;
     }
 }

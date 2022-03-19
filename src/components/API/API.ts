@@ -76,7 +76,7 @@ export class APIBase {
         return {success: false};
     }
 
-    async fetchHome(sortMode: string, offset=0, limit=5) : Promise<Array<PublishedJournal>> {
+    async fetchHome(sortMode: string, remixMode: string, offset=0, limit=5) : Promise<Array<PublishedJournal>> {
         let headers : any = { 'Accept': 'application/json', 'Authorization': `Bearer ${Authentication.token}` };
         
         let resp = await axios.get(`${ENDPOINT}/fetch-user-feed/${offset}`, {headers: headers}).catch(() => {});
@@ -142,7 +142,7 @@ export class APIBase {
         throw new Error('Cannot comment');
     }
 
-    async fetchJournalsByUser(userId: string, sortMode: string, offset=0, limit=5) {
+    async fetchJournalsByUser(userId: string, sortMode: string, remixMode:string, offset=0, limit=5) {
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
@@ -289,20 +289,56 @@ export class APIBase {
         throw new Error('Cannot like post');
     }
 
-    async fetchTagByQuery(tag: string, sortMode: string, offset=0, limit=5) : Promise<any> {
+    private async _queryJournals({query, fields, sort, page, remix} : {query: string, fields: Array<string>, sort: string, page: number, remix: string}) {
         let headers : any = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
         }
         
-        let resp = await axios.post(`${ENDPOINT}/query-journals`, JSON.stringify({
+        let resp = await axios.post(`${ENDPOINT}/query-journals`,
+            JSON.stringify({query, fields, sort, page, remix}),
+            {headers: headers}).catch(() => {});
+        return (resp as any).data.results;
+    }
+
+    async fetchTagByQuery(tag: string, sortMode: string, remixMode:string, offset=0, limit=5) : Promise<any> {
+        return this._queryJournals({
             query: tag,
             fields: ['tags'],
             sort: sortMode,
             page: offset,
-            remix: true
-        }), {headers: headers}).catch(() => {});
-        return (resp as any).data.results;
+            remix: remixMode
+        })
+    }
+
+    async fetchJournalsByUsername(username: string, sortMode: string, remixMode:string, offset=0, limit=5) : Promise<any> {
+        return this._queryJournals({
+            query: username,
+            fields: ['usernames'],
+            sort: sortMode,
+            page: offset,
+            remix: remixMode
+        })
+    }
+
+    async fetchJournalsByQuery(query: string, sortMode: string, remixMode:string, offset=0, limit=5) : Promise<any> {
+        return this._queryJournals({
+            query: query,
+            fields: ['journals'],
+            sort: sortMode,
+            page: offset,
+            remix: remixMode
+        })
+    }
+
+    async fetchJournalsByQueryAll(query: string, sortMode: string, remixMode:string, offset=0, limit=5) : Promise<any> {
+        return this._queryJournals({
+            query: query,
+            fields: ['tags', 'usernames', 'journals'],
+            sort: sortMode,
+            page: offset,
+            remix: remixMode
+        })
     }
 }
 

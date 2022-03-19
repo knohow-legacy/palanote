@@ -1,13 +1,14 @@
 .searchBar {
     left: 0px;
     top: 76px;
-    z-index: 1;
+    z-index: 50;
     margin: 5px;
     outline: 0;
     position: sticky;
     width: calc(100% - 12px);
     border-radius: 10px;
     border: 1px solid #777;
+    box-shadow: 0 0 5px #777;
 }
 .searchBarQuery {
     display: flex;
@@ -40,7 +41,7 @@
 
     border-radius: 0 0 10px 10px;
     overflow: hidden;
-
+    box-shadow: 0 0 5px #777;
 }
 .searchBar .autocompleteItem {
     padding: 5px;

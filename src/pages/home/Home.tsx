@@ -19,7 +19,7 @@ function Home() {
         <h1>Welcome home</h1>
         <p>Your followed users and topics will show up here.</p>
       </div>
-      <JournalList key='home' fetchRoute={API.fetchHome.bind(API)} fetchArgs={[]} />
+      <JournalList showActions={false} key='home' fetchRoute={API.fetchHome.bind(API)} fetchArgs={[]} />
     </div>
   );
 }

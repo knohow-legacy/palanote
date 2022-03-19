@@ -8,17 +8,27 @@ import './ContextMenu.css';
     className: 'danger',
     onClick: () => {}
 } */
-function ContextMenu({title, children, items, direction} : {title: string, children:any, direction: 'up' | 'down', items: Array<{onClick: any, className?: string, href?: string, label: string, icon: any}>}) {
+function ContextMenu({title, children, items, direction} : {title: string, children?:any, direction: 'up-left' | 'up-right' | 'down-left' | 'down-right', items: Array<{onClick: any, className?: string, href?: string, label: string, icon: any}>}) {
     const [isOpened, setIsOpened] = React.useState(false);
 
     let contextStyles = {};
     switch(direction) {
-        case 'up':
+        case 'up-left':
             contextStyles = {bottom: '100%', right: 0};
+            break;
+        case 'up-right':
+            contextStyles = {bottom: '100%', left: 0};
+            break;
+        case 'down-left':
+            contextStyles = {top: '100%', right: 0};
+            break;
+        case 'down-right':
+            contextStyles = {top: '100%', left: 0};
+            break;
     }
     
     return (
-        <div className={"contextMenu" + (isOpened ? ' opened' : '')} onClick={(e) => {setIsOpened(!isOpened); e.stopPropagation()}}>
+        <div className={"contextMenu" + (direction.includes('up') ? ' up' : ' down') + (isOpened ? ' opened' : '')} onClick={(e) => {setIsOpened(!isOpened); e.stopPropagation()}}>
             {children}
             <div className="contextMenuItems" style={contextStyles}>
                 {

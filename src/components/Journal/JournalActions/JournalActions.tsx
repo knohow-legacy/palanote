@@ -103,7 +103,7 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
     
     return (
         <div className="journalActions">
-            <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? stopPropagation : () => {}} className="author">
+            <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? () => {} : stopPropagation} className="author">
                 <img className="authorPfp" src={user.pfp} alt={
                     user.username
                 } />
@@ -129,7 +129,7 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
                     <AutoMode />
                     <span>{journal.remixInfo.remixes}</span>
                 </NavLink>
-                <ContextMenu direction="up" title="Context Menu" items={dropdownItems}>
+                <ContextMenu direction="up-left" title="Context Menu" items={dropdownItems}>
                     <MoreVert />
                 </ContextMenu>
             </div>

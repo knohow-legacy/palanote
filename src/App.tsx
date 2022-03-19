@@ -10,8 +10,13 @@ import Compose from './pages/compose/Compose';
 import Remix from './pages/remix/Remix';
 import Login from './pages/login/Login';
 import Settings from './pages/settings/Settings';
+
 import Search from './pages/search/Search';
 import SearchTag from './pages/SearchTag/SearchTag';
+import SearchUser from './pages/SearchUser/SearchUser';
+import SearchQuery from './pages/SearchQuery/SearchQuery'
+import SearchAll from './pages/SearchAll/SearchAll';
+
 import Profile from './pages/profile/Profile';
 import JournalPage from './pages/journal/JournalPage';
 
@@ -37,6 +42,18 @@ function App() {
                         <Route path="/search/tag">
                             <Route index element={<Navigate to="/search" />} />
                             <Route path=":tag" element={<SearchTag />} />
+                        </Route>
+                        <Route path="/search/user">
+                            <Route index element={<Navigate to="/search" />} />
+                            <Route path=":username" element={<SearchUser />} />
+                        </Route>
+                        <Route path="/search/journal">
+                            <Route index element={<Navigate to="/search" />} />
+                            <Route path=":query" element={<SearchQuery />} />
+                        </Route>
+                        <Route path="/search/all">
+                            <Route index element={<Navigate to="/search" />} />
+                            <Route path=":query" element={<SearchAll />} />
                         </Route>
                     </Route>
                     <Route path="/login" element={<Login />} />

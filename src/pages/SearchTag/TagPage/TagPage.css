@@ -16,7 +16,7 @@
 .tagProfilePage .profileHeader .bio {
     position: absolute;
     color: black;
-    top: calc(8px + min(15vw, 125px));
+    top: 130px;
     left: 5vw;
     width: calc(100% - 30vw);
     border-radius: 5px;

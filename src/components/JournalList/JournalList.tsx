@@ -7,6 +7,7 @@ import Journal from '../Journal/Journal';
 import Loading from '../Loading/Loading';
 import Error from '../Error/Error';
 import './JournalList.css';
+import SortingOptions from './SortingOptions/SortingOptions';
 
 /**
  * Infinite query for fetching journals.
@@ -19,16 +20,18 @@ import './JournalList.css';
 
 const limit = 10;
 
-function JournalList({fetchRoute, fetchArgs} : {fetchRoute : Function, fetchArgs : Array<any>}) {
+function JournalList({fetchRoute, fetchArgs, showActions=true} : {fetchRoute : Function, fetchArgs : Array<any>, showActions?: boolean}) {
     const [sortMode, setSortMode] = React.useState<'new' | 'top'>('new');
+    const [remixMode, setRemixMode] = React.useState<'true' | 'false' | 'only'>('true');
+
     const {data,
         error,
         fetchNextPage,
         hasNextPage,
         isFetching,
         isFetchingNextPage,
-        status} : any = useInfiniteQuery(`journals-${fetchArgs}`,
-            async ({pageParam=0}) => {return await fetchRoute(...fetchArgs, sortMode, pageParam, limit)},
+        status} : any = useInfiniteQuery([`journals-${fetchArgs}`, sortMode, remixMode],
+            async ({pageParam=0}) => {return await fetchRoute(...fetchArgs, sortMode, remixMode, pageParam, limit)},
             { getNextPageParam: (lastPage, pages) => (lastPage.length === 0 ? null : pages.length) }
         );
     
@@ -47,9 +50,7 @@ function JournalList({fetchRoute, fetchArgs} : {fetchRoute : Function, fetchArgs
             return <div className="journalList"><Error text={error.message} /></div>;
         default:
             return <div className="journalList">
-                <div key="top" className="top">
-                    <button onClick={() => {setSortMode(sortMode === 'top' ? 'new' : 'top')}}>Sorting by {sortMode}</button>
-                </div>
+                {showActions && <SortingOptions setSortMode={setSortMode} sortMode={sortMode} setRemixMode={setRemixMode} remixMode={remixMode} />}
                 {data.pages.map((page: Array<PublishedJournal>, pageIndex:number) =>
                     (
                     <React.Fragment key={pageIndex * -1}>
