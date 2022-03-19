@@ -1,5 +1,5 @@
 import React from 'react';
-import { Add, Check, Remove } from '@mui/icons-material';
+import { Add, Remove } from '@mui/icons-material';
 import '../ProfilePage.css';
 
 import { API } from '../../../../components/API/API';

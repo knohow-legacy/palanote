@@ -27,6 +27,11 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
             setIsLiked(await API.likeJournal(journal.id));
         }
     }
+    async function remix(e:any) {
+        if (!journal.remixInfo['allow-remix']) {
+            e.preventDefault();
+        }
+    }
     
     function stopPropagation(e:any) {
         e.stopPropagation()
@@ -125,9 +130,9 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
                     <Comment />
                     <span>{journal.comments}</span>
                 </div>
-                <NavLink to={`/remix/${journal.id}`} className={journal.remixInfo['allow-remix'] ? "remixes" : "remixes disabled"}>
+                <NavLink onClick={remix} to={`/remix/${journal.id}`} className={journal.remixInfo['allow-remix'] ? "remixes" : "remixes disabled"}>
                     <AutoMode />
-                    <span>{journal.remixInfo.remixes}</span>
+                    {journal.remixInfo['allow-remix'] && <span>{journal.remixInfo.remixes}</span>}
                 </NavLink>
                 <ContextMenu direction="up-left" title="Context Menu" items={dropdownItems}>
                     <MoreVert />

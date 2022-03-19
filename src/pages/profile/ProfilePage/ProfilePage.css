@@ -24,7 +24,7 @@
 .profileHeader .bio {
     position: absolute;
     color: black;
-    top: calc(90px + min(15vw, 125px));
+    top: calc(120px + min(10vw, 90px));
     left: 5vw;
     width: calc(100% - 10vw);
     border-radius: 5px;

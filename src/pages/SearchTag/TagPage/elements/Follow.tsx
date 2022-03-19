@@ -1,12 +1,23 @@
 import React from 'react';
-import { Add, Check } from '@mui/icons-material';
+import { Add, Remove } from '@mui/icons-material';
 import '../TagPage.css';
 
-function Follow({isFollowed} : {isFollowed: boolean}) {
+import { API } from '../../../../components/API/API';
+
+function Follow({tag, isFollowed} : {tag: string, isFollowed: boolean}) {
+    let [followedState, setFollowedState] = React.useState(isFollowed);
+
+    async function toggleFollowed() {
+        setFollowedState(!followedState);
+
+        // Update the state once request succeeds just to be sure
+        setFollowedState(await API.followTopic(tag).catch(() => followedState));
+    }
+
     return (
-        <div className="actionBtn">
-            {isFollowed ? <Check /> : <Add />}
-            {isFollowed ? <span>Following</span> : <span>Follow</span>}
+        <div onClick={toggleFollowed} className={followedState ? "actionBtn following" : "actionBtn"}>
+            {followedState ? <Remove /> : <Add />}
+            {followedState ? <span>Unfollow</span> : <span>Follow</span>}
         </div>
     );
   }

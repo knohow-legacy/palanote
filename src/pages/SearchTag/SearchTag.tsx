@@ -14,6 +14,8 @@ import JournalList from '../../components/JournalList/JournalList';
 function SearchTag() {
     let { tag } = useParams();
 
+    tag = tag?.toLowerCase().replace(/[^a-z0-9]/g, '');
+
     let [storedTag, setStoredTag] = React.useState(tag);
 
     if (!tag) return (<Navigate to="/search" />);
