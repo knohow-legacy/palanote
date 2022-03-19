@@ -19,7 +19,7 @@ function SearchUser() {
         <div className="page searchTag">
             <Header name={username} icon={<Search />} />
             <SearchBar defaultValue={username} />
-            <JournalList key={username} fetchRoute={API.fetchJournalsByQuery.bind(API)} fetchArgs={args} />
+            <JournalList key={username} fetchRoute={API.fetchJournalsByUsername.bind(API)} fetchArgs={args} />
         </div>
     );
 }
