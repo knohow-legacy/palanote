@@ -99,11 +99,11 @@ export default class EditorHandler {
         this.editor.canvas.freeDrawingBrush = this.psBrush;
         this.editor.canvas.uniformScaling = true;
 
-        this.editor.canvas.on("object:added", (e) => {
-            if (!(e.target as any)?.undone && !(e.target as any)?.redone && (!(e.target as any)?.remixed && !(e.target as any)?.modified)) {
+        this.editor.canvas.on("object:added", ({target} : any) => {
+            if (target && !target.undone && !target.redone) {
                 // Only update history on new items, not undone/redone items
                 this.redoHistory = [];
-                this.undoHistory.push({type: e.target?.type, target: e.target?.saveState()});
+                this.undoHistory.push({type: target.type, target: target.saveState()});
                 
                 // remove old items after a while
                 if (this.undoHistory.length > 100) this.undoHistory.shift();
@@ -116,8 +116,9 @@ export default class EditorHandler {
         this.editor.canvas.on("object:modified", ({e, action, transform, target}:any) => {
             target._objects.forEach((obj:any) => {
                 if (obj.remixed && !obj.modified) {
+                    console.log(obj.opacity)
                     obj.opacity = obj.opacity * 2;
-                    obj.modified = true;
+                    obj['modified'] = true;
                 }
             })
         })
@@ -148,12 +149,13 @@ export default class EditorHandler {
     }
 
 
-    // Drafts
+    // Loads a draft
     async loadDraft(draft : PublishedJournal, isRemix: boolean) {
         if (!this.editor) return;
         this.draft = draft;
         this.isRemix = isRemix;
         this.setVisibility(draft.visibility);
+        this.editor.canvas.setDimensions({width: 1240, height: 1754});
 
         if (isRemix) {
             this.remixInfo['original-journal-id'] = draft.id;
@@ -163,14 +165,24 @@ export default class EditorHandler {
             this.remixInfo['remix-chain']++;
         }
 
-        // something
-        await new Promise((resolve) => this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), resolve))
-        if (isRemix) {
-            this.editor.canvas._objects.forEach((obj:any) => {
-                obj['remixed'] = true;
-                obj.opacity = obj.opacity / 2;
+        // load
+        await new Promise<void>((resolve) => {
+            this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), () => resolve(), (o:any, object:any) => {
+                console.log(object);
+                if (isRemix) {
+                    object['remixed'] = true;
+                    object.opacity = object.opacity / 2;
+                }
             })
-        }
+        })
+        
+        this.editor.canvas.renderAll();
+        (this.editor.canvas as any).setCurrentDimensions();
+
+        // clear histories added during load
+        this.undoHistory = [];
+        this.redoHistory = [];
+        this.notify('update');
         
         //this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
     }
@@ -180,7 +192,10 @@ export default class EditorHandler {
 
         const journal : any = {
             id: this.draft.id,
-            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
+            content: {
+                data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON())),
+                svg: encodeURIComponent(this.editor.canvas.toSVG())
+            },
             topics: this.topics,
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
@@ -201,7 +216,7 @@ export default class EditorHandler {
 
 
         this.editor.canvas._objects.forEach((obj:any) => {
-            if (obj['remixed']) {
+            if (obj['remixed'] && !obj['modified']) {
                 obj.opacity = (obj.opacity || 0.5) * 2;
             }
 
@@ -214,7 +229,10 @@ export default class EditorHandler {
         this.editor.canvas.setDimensions({width: targetWidth, height: height / (width / (targetWidth || 1))}); // A4 / 2
 
         const journal : Journal = {
-            content: {data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON()))},
+            content: {
+                data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON())),
+                svg: encodeURIComponent(this.editor.canvas.toSVG())
+            },
             topics: this.topics,
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
@@ -238,15 +256,15 @@ export default class EditorHandler {
     applyToolSettings(tool: BrushTool) {
         let brush : any = tool === 'eraser' ? this.eraseBrush : this.psBrush;
         if (tool === 'eraser') {
-            brush.width = this.settings[tool].width / 2;
+            brush.width = this.settings[tool].width;
         } else {
-            brush.pressureManager.fallback = this.settings[tool].width / 8;
+            brush.pressureManager.fallback = this.settings[tool].width / 4;
             if (this.settings[tool].pressureSensitive) {
                 brush.pressureManager.min = 0;
             } else {
                 brush.pressureManager.min = 1;
             }
-            brush.width = this.settings[tool].width / 2;
+            brush.width = this.settings[tool].width;
             brush.color = this.settings[tool].color;
             brush.opacity = this.settings[tool].opacity;
         }

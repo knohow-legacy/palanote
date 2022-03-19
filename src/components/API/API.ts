@@ -12,7 +12,8 @@ export interface RemixInfo {
 }
 export interface Journal {
     content: {
-        data: string; // SVG string
+        data: string; // JSON string
+        svg: string; // SVG string
     }
     title: string;
     topics: Array<string>;

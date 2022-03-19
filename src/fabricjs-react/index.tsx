@@ -34,7 +34,9 @@ const FabricJSCanvas = ({ className, dimensions, onReady }: Props) => {
     const resizeCanvas = () => {
       setCurrentDimensions()
     }
-    setCurrentDimensions()
+    setCurrentDimensions();
+
+    (canvas as any)['setCurrentDimensions'] = setCurrentDimensions;
 
     window.addEventListener('resize', resizeCanvas, false)
 
