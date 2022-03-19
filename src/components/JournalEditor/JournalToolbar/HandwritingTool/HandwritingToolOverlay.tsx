@@ -5,7 +5,7 @@ import './HandwritingToolOverlay.css';
 
 // Overlay for handwritten tool (color, thickness, opacity)
 
-const colors = [
+export const colors = [
     {
         name: 'Black',
         color: '#000000',

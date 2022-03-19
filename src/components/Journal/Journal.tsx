@@ -9,7 +9,7 @@ import JournalActions from './JournalActions/JournalActions';
 function Journal({index, journal, expanded} : {index?: any, journal: PublishedJournal, expanded: boolean}) {
     const result = useQuery(`user-${journal.authorID}`, async () => await API.fetchUserById(journal.authorID));
     const remixResult = useQuery(`journal-${journal.remixInfo['original-journal-id']}`, async () => await API.fetchJournalById(journal.remixInfo['original-journal-id']), {
-        enabled: !!journal.remixInfo['original-journal-id']
+        enabled: !!journal.remixInfo['is-remix']
     });
 
     const navigate = useNavigate();

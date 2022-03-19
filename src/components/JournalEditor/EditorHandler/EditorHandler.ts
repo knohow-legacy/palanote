@@ -23,6 +23,22 @@ interface BrushSettingsOptions {
     pressureSensitive?: boolean; // Determines if pressure sensitivity is enabled (iPad)
     removesFullStrokes?: boolean;
 }
+interface TextSettings {
+    fontFamily: string;
+    fontSize: number;
+    color: string;
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderline: boolean;
+}
+interface TextSettingsOptions {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    isBold?: boolean;
+    isItalic?: boolean;
+    isUnderline?: boolean;
+}
 type Tool = 'select' | 'pen' | 'highlighter' | 'eraser' | 'text';
 type BrushTool = 'pen' | 'highlighter' | 'eraser';
 
@@ -83,11 +99,19 @@ export default class EditorHandler {
             removesFullStrokes: true
         }
     };
+    textSettings : TextSettings = {
+        fontFamily: 'Arial',
+        fontSize: 12,
+        color: '#000000',
+        isBold: false,
+        isItalic: false,
+        isUnderline: false
+    }
 
     // Sort objects by opacity (highlights behind strokes)
     sortByOpacity() {
         this.editor.canvas._objects.sort((a:any, b:any) => {
-            return a.opacity - b.opacity;
+            return (a.type === 'textbox' ? a.opacity - 0.01 : a.opacity) - b.opacity;
         });
     }
 
@@ -114,13 +138,37 @@ export default class EditorHandler {
         })
 
         this.editor.canvas.on("object:modified", ({e, action, transform, target}:any) => {
-            target._objects.forEach((obj:any) => {
+            let objects = target._objects || [target];
+            objects.forEach((obj:any) => {
                 if (obj.remixed && !obj.modified) {
-                    console.log(obj.opacity)
                     obj.opacity = obj.opacity * 2;
                     obj['modified'] = true;
                 }
             })
+        })
+
+        const selection = ({target}:any) => {
+            if (!target || target._objects) return; // only one object should be selected
+            if (target.type === 'textbox') {
+                // set textbox settings
+                this.textSettings = {
+                    fontFamily: target.fontFamily,
+                    fontSize: target.fontSize / 2,
+                    color: target.fill,
+                    isBold: target.fontWeight === 'bold',
+                    isItalic: target.fontStyle === 'italic',
+                    isUnderline: target.underline
+                }
+            }
+        }
+
+        this.editor.canvas.on("selection:created", selection);
+        this.editor.canvas.on("selection:updated", selection);
+
+        this.editor.canvas.on("mouse:down", ({target, pointer}:any) => {
+            if (!target && this.currentTool === 'text') {
+                this.addText("", pointer.x, pointer.y);
+            }
         })
 
         this.editor.canvas.on("erasing:end", ({targets, drawables}:any) => {
@@ -243,6 +291,56 @@ export default class EditorHandler {
         return API.uploadJournal(journal);
     }
 
+    updateTextSettings(settings: TextSettingsOptions) {
+        Object.assign(this.textSettings, settings);
+        this.applyTextSettings();
+    }
+
+    applyTextSettings() {
+        const selectedObject = this.editor.canvas.getActiveObject();
+
+        if (selectedObject && selectedObject.type === 'textbox') {
+            (selectedObject as any).set({
+                fontSize: this.textSettings.fontSize * 2,
+                fontFamily: this.textSettings.fontFamily,
+                fontWeight: this.textSettings.isBold ? 'bold' : 'normal',
+                fontStyle: this.textSettings.isItalic ? 'italic' : 'normal',
+                underline: this.textSettings.isUnderline,
+                fill: this.textSettings.color
+            });
+            this.editor.canvas.renderAll();
+        }
+    }
+
+    addText(initialString?: string, pointerX? : number, pointerY? : number) {
+        const text = new fabric.Textbox("", {
+            left: pointerX || 10,
+            top: pointerY || 100,
+            width: this.editor.canvas.getWidth() - (pointerX || 20),
+            splitByGrapheme: true,
+            lineHeight: 1.1,
+            backgroundColor: 'transparent',
+
+            fontSize: this.textSettings.fontSize * 2,
+            fontFamily: this.textSettings.fontFamily,
+            fontWeight: this.textSettings.isBold ? 'bold' : 'normal',
+            fontStyle: this.textSettings.isItalic ? 'italic' : 'normal',
+            underline: this.textSettings.isUnderline,
+            fill: this.textSettings.color
+        })
+        this.editor.canvas.add(text);
+        this.editor.canvas.setActiveObject(text);
+        text.enterEditing();
+
+        if (text.hiddenTextarea) {
+            text.hiddenTextarea.focus();
+            // set value after the fact so cursor jumps to it
+            text.text = initialString || "";
+            text.hiddenTextarea.value = initialString || "";
+        }
+        this.editor.canvas.renderAll();
+    }
+
     updateToolSettings(tool: BrushTool | null, settings: BrushSettingsOptions) {
         if (!tool) tool = this.currentTool as BrushTool;
         
@@ -271,13 +369,19 @@ export default class EditorHandler {
     }
 
     setTool(tool : Tool) {
-        
         this.currentTool = tool;
         if (['pen', 'highlighter', 'eraser'].includes(tool)) {
             this.editor.canvas.isDrawingMode = true;
             this.applyToolSettings(tool as BrushTool);
         } else {
             this.editor.canvas.isDrawingMode = false;
+        }
+        if (tool === 'select') {
+            this.editor.canvas.selection = true;
+            this.editor.canvas.defaultCursor = 'default';
+        } else if (tool === 'text') {
+            this.editor.canvas.selection = false;
+            this.editor.canvas.defaultCursor = 'text';
         }
     }
 

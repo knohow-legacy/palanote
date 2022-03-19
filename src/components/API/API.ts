@@ -207,9 +207,7 @@ export class APIBase {
             journalID: journal.id,
             title: journal.title,
             topics: journal.topics,
-            content: {
-                data: journal.content.data
-            },
+            content: journal.content,
             isDraft: journal.isDraft,
             visibility: journal.visibility
         }), {

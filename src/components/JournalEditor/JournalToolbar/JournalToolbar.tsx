@@ -5,6 +5,7 @@ import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Undo, Redo,
 import EditorHandler from '../EditorHandler/EditorHandler';
 import Dropdown from './Dropdown/Dropdown';
 import HandwritingTool from './HandwritingTool/HandwritingTool';
+import TextTool from './TextTool/TextTool';
 
 const divider = {type: 'divider', props: {title: '', tool: '', icon: null, onClick: () => {}}};
 const growableDivider = {type: 'growableDivider', props: {title: '', tool: '', icon: null, onClick: () => {}}};
@@ -61,7 +62,7 @@ const tools = [
     },
     divider,
     {
-        type: 'button',
+        type: 'TextTool',
         props: {
             title: 'Add Text',
             tool: 'text',
@@ -159,6 +160,32 @@ function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandle
     const forceUpdate = () => {update(!updateParam)}
     editorHandler.setListener('update', forceUpdate);
 
+    function autoTextbox(e:any) {
+        if (e.target instanceof HTMLInputElement) return;
+        if ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57)) {
+            let textToolIndex = tools.findIndex(tool => tool.type === 'TextTool');
+            if (activeTool !== textToolIndex) {
+                setActiveTool(textToolIndex);
+                editorHandler?.setTool('text');
+            }
+
+            if (!editorHandler?.editor.canvas.getActiveObject() ||
+                editorHandler?.editor.canvas.getActiveObject().type !== 'textbox') {
+                editorHandler?.addText(String.fromCharCode(e.keyCode));
+            }
+        }
+        
+    }
+
+    React.useEffect(() => {
+        window.addEventListener('keyup', autoTextbox)
+    
+        // will run on cleanup
+        return () => {
+            window.removeEventListener('keyup', autoTextbox)
+        }
+    })
+
     const toolbar = tools.map((tool, index) => {
         switch(tool.type) {
             case 'divider':
@@ -210,6 +237,19 @@ function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandle
             case 'HandwritingTool':
                 return (
                     <HandwritingTool
+                        key={tool.props.tool}
+                        isSelected={activeTool === index}
+                        editorHandler={editorHandler}
+                        {...tool.props}
+                        onClick={(e : any) => {
+                            (e.target as HTMLElement).blur();
+                            tool.props.onClick(editorHandler, () => {setActiveTool(index)}, isLoading, setIsLoading)
+                        }}
+                    />
+                );
+            case 'TextTool':
+                return (
+                    <TextTool
                         key={tool.props.tool}
                         isSelected={activeTool === index}
                         editorHandler={editorHandler}
