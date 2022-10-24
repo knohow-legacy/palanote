@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ENDPOINT = process.env.NODE_ENV === 'development' ?
     'http://localhost:8080/api' :
-    'https://postit.azurewebsites.net/api';
+    'https://postit-backend.azurewebsites.net/api';
 //const ENDPOINT = 'https://knohow.azurewebsites.net/api';
 
 export interface RemixInfo {
