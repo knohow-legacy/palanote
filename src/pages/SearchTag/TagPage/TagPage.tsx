@@ -12,7 +12,7 @@ import Follow from './elements/Follow';
 import { useQuery } from 'react-query';
 
 function ProfilePage({tag} : {tag: string}) {
-    const result = useQuery(`user-me`, async () => await API.fetchUserById('me'));
+    const result = useQuery(['user', 'me'], async () => await API.fetchUserById('me'));
 
     return (
         <div className="profilePage tagProfilePage">

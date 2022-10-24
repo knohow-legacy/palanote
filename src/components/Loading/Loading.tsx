@@ -1,9 +1,9 @@
 import React from 'react';
 import './Loading.css';
 
-function Loading() {
+function Loading({hasBackground} : {hasBackground?: boolean} = {hasBackground: true}) {
   return (
-    <div className="loading">
+    <div className="loading" style={{backgroundColor: hasBackground === false ? 'transparent' : ''}}>
         <div className="spinner" />
     </div>
   );

@@ -1,11 +1,16 @@
 import React from 'react';
 import '../JournalEditor.css';
+import { useQueryClient } from 'react-query';
 
 import { Brush, Highlight, TextFields, HighlightAlt, Backspace, Add, Undo, Redo, Visibility, VisibilityOff, TouchApp, PanTool, DoNotTouch } from '@mui/icons-material';
 import EditorHandler from '../EditorHandler/EditorHandler';
 import Dropdown from './Dropdown/Dropdown';
 import HandwritingTool from './HandwritingTool/HandwritingTool';
 import TextTool from './TextTool/TextTool';
+
+import Eraser from './eraser.svg';
+import Highlighter from './highlighter.svg';
+import Pen from './pen.svg';
 
 const divider = {type: 'divider', props: {title: '', tool: '', icon: null, onClick: () => {}}};
 const growableDivider = {type: 'growableDivider', props: {title: '', tool: '', icon: null, onClick: () => {}}};
@@ -29,7 +34,7 @@ const tools = [
         props: {
             title: 'Pen Tool',
             tool: 'pen',
-            icon: <Brush />,
+            icon: <img width="28" height="28" src={Pen} alt="Pen tool" />,
             onClick: (editor: EditorHandler, setActiveTool : any, isLoading:boolean, setIsLoading:any) => {
                 setActiveTool();
                 editor.setTool('pen');
@@ -41,7 +46,7 @@ const tools = [
         props: {
             title: 'Highlight Tool',
             tool: 'highlighter',
-            icon: <Highlight />,
+            icon: <img width="28" height="28" src={Highlighter} alt="Highlighter tool" />,
             onClick: (editor: EditorHandler, setActiveTool : any, isLoading:boolean, setIsLoading:any) => {
                 setActiveTool();
                 editor.setTool('highlighter');
@@ -53,7 +58,7 @@ const tools = [
         props: {
             title: 'Eraser Tool',
             tool: 'eraser',
-            icon: <Backspace />,
+            icon: <img width="28" height="28" src={Eraser} alt="Eraser tool" />,
             onClick: (editor: EditorHandler, setActiveTool : any, isLoading:boolean, setIsLoading:any) => {
                 setActiveTool();
                 editor.setTool('eraser');
@@ -174,6 +179,9 @@ const tools = [
 
                 if (resp.success) {
                     window.location.hash = `#/journal/${resp.journalID}`;
+                } else {
+                    alert("Error posting journal... try again?");
+                    setIsLoading(false);
                 }
             }
         }
@@ -183,13 +191,27 @@ const tools = [
 function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandler : EditorHandler, isLoading : boolean, setIsLoading : any}) {
     const [activeTool, setActiveTool] : [number, any] = React.useState(0);
     const [updateParam, update] = React.useState(false);
+    let queryClient = useQueryClient()
+
+    let location = window.location.hash.split('compose/')[1];
+    if (location && queryClient.getQueryData(['journal', location])) {
+        queryClient.invalidateQueries(['journal', location]);
+    }
 
     const forceUpdate = () => {update(!updateParam)}
     editorHandler.setListener('update', forceUpdate);
 
-    function autoTextbox(e:any) {
+    function onPaste(e:any) {
+        e.preventDefault();
+        let text = e.clipboardData.getData("text/plain");
+        editorHandler?.pasteSelection(text);
+    }
+
+    function keyUp(e:any) {
         if (e.target instanceof HTMLInputElement) return;
-        if ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57)) {
+
+        // auto textbox
+        if (!e.ctrlKey && ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57))) {
             let textToolIndex = tools.findIndex(tool => tool.type === 'TextTool');
             if (activeTool !== textToolIndex) {
                 setActiveTool(textToolIndex);
@@ -201,15 +223,46 @@ function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandle
                 editorHandler?.addText(String.fromCharCode(e.keyCode));
             }
         }
+
+        if (e.keyCode === 46) { // Delete
+            editorHandler?.deleteSelection();
+            
+        } else if (e.keyCode === 27) { // Escape
+            setActiveTool(0);
+            editorHandler?.setTool('select');
+        }
+
+        if (e.ctrlKey) {
+            switch(e.key) {
+                case 'z':
+                    editorHandler?.undo();
+                    break;
+                case 'y':
+                    editorHandler?.redo();
+                    break;
+                case 'a':
+                    editorHandler?.selectAll();
+                    e.stopPropagation();
+                    break;
+                case 'c':
+                    editorHandler?.copySelection();
+                    break;
+                case 'x':
+                    editorHandler?.cutSelection();
+                    break;
+            }
+        }
         
     }
 
     React.useEffect(() => {
-        window.addEventListener('keyup', autoTextbox)
+        window.addEventListener('keyup', keyUp)
+        window.addEventListener('paste', onPaste);
     
         // will run on cleanup
         return () => {
-            window.removeEventListener('keyup', autoTextbox)
+            window.removeEventListener('keyup', keyUp)
+            window.removeEventListener('paste', onPaste);
         }
     })
 

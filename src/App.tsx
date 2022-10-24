@@ -27,46 +27,47 @@ function App() {
     <div className="app">
         <QueryClientProvider client={queryClient}>
             <Router>
-                <Sidebar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/compose">
-                        <Route index element={<Compose />} />
-                        <Route path=":journalId" element={<Compose />} />
-                    </Route>
-                    <Route path="/remix">
-                        <Route path=":journalId" element={<Remix />} />
-                    </Route>
-                    <Route path="/search">
-                        <Route index element={<Search />} />
-                        <Route path="/search/tag">
-                            <Route index element={<Navigate to="/search" />} />
-                            <Route path=":tag" element={<SearchTag />} />
+                <Sidebar>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/compose">
+                            <Route index element={<Compose />} />
+                            <Route path=":journalId" element={<Compose />} />
                         </Route>
-                        <Route path="/search/user">
-                            <Route index element={<Navigate to="/search" />} />
-                            <Route path=":username" element={<SearchUser />} />
+                        <Route path="/remix">
+                            <Route path=":journalId" element={<Remix />} />
                         </Route>
-                        <Route path="/search/journal">
-                            <Route index element={<Navigate to="/search" />} />
-                            <Route path=":query" element={<SearchQuery />} />
+                        <Route path="/search">
+                            <Route index element={<Search />} />
+                            <Route path="/search/tag">
+                                <Route index element={<Navigate to="/search" />} />
+                                <Route path=":tag" element={<SearchTag />} />
+                            </Route>
+                            <Route path="/search/user">
+                                <Route index element={<Navigate to="/search" />} />
+                                <Route path=":username" element={<SearchUser />} />
+                            </Route>
+                            <Route path="/search/journal">
+                                <Route index element={<Navigate to="/search" />} />
+                                <Route path=":query" element={<SearchQuery />} />
+                            </Route>
+                            <Route path="/search/all">
+                                <Route index element={<Navigate to="/search" />} />
+                                <Route path=":query" element={<SearchAll />} />
+                            </Route>
                         </Route>
-                        <Route path="/search/all">
-                            <Route index element={<Navigate to="/search" />} />
-                            <Route path=":query" element={<SearchAll />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/profile">
+                            <Route index element={<Profile />} />
+                            <Route path=":userId" element={<Profile />} />
                         </Route>
-                    </Route>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/profile">
-                        <Route index element={<Profile />} />
-                        <Route path=":userId" element={<Profile />} />
-                    </Route>
-                    <Route path="/journal">
-                        <Route index element={<Navigate to="/" />} />
-                        <Route path=":journalId" element={<JournalPage />} />
-                    </Route>
-                </Routes>
+                        <Route path="/journal">
+                            <Route index element={<Navigate to="/" />} />
+                            <Route path=":journalId" element={<JournalPage />} />
+                        </Route>
+                    </Routes>
+                </Sidebar>
             </Router>
         </QueryClientProvider>
     </div>

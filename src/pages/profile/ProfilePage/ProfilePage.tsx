@@ -17,7 +17,7 @@ function ProfilePage({user, journals, isSelf} : any) {
                 <Banner src="" />
                 <Pfp src={user.pfp} />
                 <Bio name={user.username} bio={user.authenticated ? "" : "Follow this user to see their posts in your home feed."} joinDate={user.timestampCreated} />
-                {!Authentication.isLoggedIn && <NavLink to="/login" className="actionBtn">Login to follow</NavLink>}
+                {!Authentication.isLoggedIn && <NavLink to={`/login?redirect=${encodeURIComponent(window.location.hash.replace('#', ''))}`} className="actionBtn">Login to follow</NavLink>}
                 {!user.authenticated && Authentication.isLoggedIn && <Follow userId={user.id} isFollowed={user.isFollowing} />}
                 {user.authenticated && <NavLink title="Edit Profile" className="actionBtn" to="/settings"><Edit /><span>Edit Profile</span></NavLink>}
             </div>

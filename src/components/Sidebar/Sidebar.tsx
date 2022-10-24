@@ -36,7 +36,7 @@ const sideBarItems = [
     }
 ]
 
-function Sidebar() {
+function Sidebar({children} : {children: any}) {
     const [activeIndex, setActiveIndex] = React.useState(0);
     const [isMinimized, setMinimized] = React.useState(window.localStorage.getItem('sideBarMinimized') === 'true');
     const location = useLocation();
@@ -50,41 +50,45 @@ function Sidebar() {
 
     // Need an outer div for flexbox, and then the inner div for sticky support
     return (
-        <div className="sidebar-wrapper">
-            <div className={"sidebar" + (isMinimized ? " minimized" : "")}>
-                <NavLink to="/" className="brandHome">
-                    <h1>PostIt</h1>
-                </NavLink>
-                {
-                    sideBarItems.map((item, index) => {
-                        if (!Authentication.isLoggedIn && item.requiresLogin) return '';
-                        return (
-                            <NavLink onClick={(e) => {window.scrollTo(0,0)}} className={item.class + (activeIndex === index ? ' active' : '')} to={item.path} key={index}>
-                                {item.icon}
-                                <span>{item.name}</span>
-                            </NavLink>
-                        )
-                    })
-                }
-                {!Authentication.isLoggedIn && (
-                    <NavLink className={'item' + (activeIndex === 98 ? ' active' : '')} to="/login" key={98}>
-                        <Login />
-                        <span>Login</span>
+        <>
+            <div className="sidebar-wrapper">
+                <div className={"sidebar" + (isMinimized ? " minimized" : "")}>
+                    <NavLink to="/" className="brandHome">
+                        <h1>palanote</h1>
                     </NavLink>
-                )}
-                {Authentication.isLoggedIn && (
-                    <NavLink className={'item' + (activeIndex === 99 ? ' active' : '')} to="/settings" key={99}>
-                        <Settings />
-                        <span>Settings</span>
-                    </NavLink>
-                )}
-                <div onClick={() => {window.localStorage.setItem('sideBarMinimized', (!isMinimized).toString()); setMinimized(!isMinimized)}} className="item minimizeBtn">
-                    {isMinimized ? <OpenInFull /> : <CloseFullscreen />}
-                    <span>Minimize</span>
+                    {
+                        sideBarItems.map((item, index) => {
+                            if (!Authentication.isLoggedIn && item.requiresLogin) return '';
+                            return (
+                                <NavLink onClick={(e) => {window.scrollTo(0,0)}} className={item.class + (activeIndex === index ? ' active' : '')} to={item.path} key={index}>
+                                    {item.icon}
+                                    <span>{item.name}</span>
+                                </NavLink>
+                            )
+                        })
+                    }
+                    {!Authentication.isLoggedIn && (
+                        <NavLink className={'item' + (activeIndex === 98 ? ' active' : '')} to="/login" key={98}>
+                            <Login />
+                            <span>Login</span>
+                        </NavLink>
+                    )}
+                    {Authentication.isLoggedIn && (
+                        <NavLink className={'item' + (activeIndex === 99 ? ' active' : '')} to="/settings" key={99}>
+                            <Settings />
+                            <span>Settings</span>
+                        </NavLink>
+                    )}
+                    <div onClick={() => {window.localStorage.setItem('sideBarMinimized', (!isMinimized).toString()); setMinimized(!isMinimized)}} className="item minimizeBtn">
+                        {isMinimized ? <OpenInFull /> : <CloseFullscreen />}
+                        <span>Minimize</span>
+                    </div>
+                    
                 </div>
-                
             </div>
-        </div>
+            {children}
+            <div className={"sidebar" + (isMinimized ? " minimized" : "")} style={{zIndex: '-1', borderLeft: '1px solid #ccc'}} />
+        </>
     );
 }
 

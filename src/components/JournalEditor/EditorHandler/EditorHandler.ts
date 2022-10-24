@@ -167,8 +167,17 @@ export default class EditorHandler {
         this.editor.canvas.on("selection:updated", selection);
 
         this.editor.canvas.on("mouse:down", ({target, pointer}:any) => {
-            if (!target && this.currentTool === 'text') {
-                this.addText("", pointer.x, pointer.y);
+            if (!target) {
+                // delete empty text elements
+                this.editor.canvas.getObjects().forEach((obj:any) => {
+                    if (obj.type === 'textbox' && obj.text === '') {
+                        this.editor.canvas.remove(obj);
+                    }
+                })
+
+                if (this.currentTool === 'text') {
+                    this.addText("", pointer.x, pointer.y);
+                }
             }
         })
 
@@ -186,6 +195,70 @@ export default class EditorHandler {
             }
             this.notify('update')
         })
+    }
+
+    deleteSelection() {
+        let target = this.editor.canvas.getActiveObject();
+        if (target) {
+            if (target.type === 'activeSelection') {
+                // @ts-ignore
+                target._objects.forEach((obj:any) => this.editor.canvas.remove(obj));
+            }
+            this.editor.canvas.remove(target);
+
+            this.editor.canvas.discardActiveObject().renderAll();
+        }
+    }
+
+    selectAll() {
+        this.editor.canvas.discardActiveObject();
+        this.editor.canvas.forEachObject((obj:any) => {
+            obj.selectable = true;
+        })
+        this.editor.canvas.renderAll();
+    }
+
+    copySelection() {
+        let target = this.editor.canvas.getActiveObject();
+        if (target) {
+            navigator.clipboard.writeText(JSON.stringify(target.toJSON()));
+            return true;
+        }
+        return false;
+    }
+
+    cutSelection() {
+        if (this.copySelection()) {
+            let target = this.editor.canvas.getActiveObject();
+            this.editor.canvas.remove(target);
+            this.editor.canvas.renderAll();
+            return true;
+        }
+        return false;
+    }
+
+    async pasteSelection(text: string) {
+        if (!text.startsWith('{')) return;
+        let json = JSON.parse(text);
+
+        if (json['type'] === 'activeSelection') {
+            fabric.util.enlivenObjects(json['objects'], (objects:any) => {
+                objects.forEach((obj:any) => {
+                    obj.left += json.left;
+                    obj.top += json.top;
+                    obj.selected = true;
+                    this.editor.canvas.add(obj);
+                })
+
+                let selection = new fabric.ActiveSelection( objects, {canvas: this.editor.canvas } );
+                this.editor.canvas.setActiveObject(selection);
+
+
+                this.editor.canvas.renderAll();
+            }, '');
+        }
+
+        return false;
     }
 
     // Listeners
@@ -214,9 +287,11 @@ export default class EditorHandler {
             this.remixInfo['remix-chain']++;
         }
 
+        const json = await API.fetchMedia('json', draft.authorID, draft.id);
+
         // load
         await new Promise<void>((resolve) => {
-            this.editor.canvas.loadFromJSON(decodeURIComponent(draft.content.data), () => resolve(), (o:any, object:any) => {
+            this.editor.canvas.loadFromJSON(json, () => resolve(), (o:any, object:any) => {
                 if (isRemix) {
                     object['remixed'] = true;
                     object.opacity = object.opacity / 2;
@@ -240,10 +315,6 @@ export default class EditorHandler {
 
         const journal : any = {
             id: this.draft.id,
-            content: {
-                data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON())),
-                svg: encodeURIComponent(this.editor.canvas.toSVG())
-            },
             topics: this.topics,
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
@@ -251,7 +322,7 @@ export default class EditorHandler {
             isDraft: this.draft.isDraft
         }
         
-        return API.patchJournal(journal);
+        return API.patchJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG());
     }
 
     postJournal() : Promise<{success: false} | {success: true; journalID: string}> {
@@ -277,10 +348,6 @@ export default class EditorHandler {
         this.editor.canvas.setDimensions({width: targetWidth, height: height / (width / (targetWidth || 1))}); // A4 / 2
 
         const journal : Journal = {
-            content: {
-                data: encodeURIComponent(JSON.stringify(this.editor.canvas.toJSON())),
-                svg: encodeURIComponent(this.editor.canvas.toSVG())
-            },
             topics: this.topics,
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
@@ -289,8 +356,10 @@ export default class EditorHandler {
         }
         
         // If draft but not remix, update it instead of making a new object
-        return API.uploadJournal(journal);
+        return API.uploadJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG());
     }
+
+    // --- TEXT ---
 
     updateTextSettings(settings: TextSettingsOptions) {
         Object.assign(this.textSettings, settings);

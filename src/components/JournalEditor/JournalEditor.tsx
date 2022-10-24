@@ -13,7 +13,7 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
     let [isLoading, setIsLoading] = React.useState(false);
     const ref : any = React.useRef(null);
 
-    function saveTitle(e:any) {
+    function keyUp(e:any) {
         editorHandler?.setTitle(e.target.value);
     }
 
@@ -21,11 +21,11 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
 
     React.useEffect(() => {
         let ref = titleRef.current;
-        ref.addEventListener('keyup', saveTitle)
+        ref.addEventListener('keyup', keyUp)
     
         // will run on cleanup
         return () => {
-            ref.removeEventListener('keyup', saveTitle)
+            ref.removeEventListener('keyup', keyUp)
         }
     })
 

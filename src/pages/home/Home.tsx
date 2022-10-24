@@ -6,6 +6,7 @@ import { API } from '../../components/API/API';
 
 import Header from '../../components/Header/Header';
 import JournalList from '../../components/JournalList/JournalList';
+import { Home as HomeIcon } from '@mui/icons-material';
 
 function Home() {
   if (!Authentication.isLoggedIn) {
@@ -14,12 +15,14 @@ function Home() {
   
   return (
     <div className="page home">
-      <Header name="Home" />
-      <div style={{padding: 10}}>
-        <h1>Welcome home</h1>
-        <p>Your followed users and topics will show up here.</p>
-      </div>
-      <JournalList showActions={false} key='home' fetchRoute={API.fetchHome.bind(API)} fetchArgs={[]} />
+      <Header icon={<HomeIcon />} name="Home" />
+      <JournalList
+        placeholder={"There's nothing here yet."}
+        showActions={false}
+        key='home'
+        fetchRoute={API.fetchHome.bind(API)}
+        fetchArgs={[]}
+      />
     </div>
   );
 }

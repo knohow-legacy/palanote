@@ -7,6 +7,10 @@
     border-radius: 10px;
     width: calc(100% - 60px);
     position: relative;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.journal.deleted {
+    display: none;
 }
 .journal h2 {
     margin-top: 0;
@@ -67,7 +71,7 @@
     position: relative;
     min-height: 300px;
 }
-.journal .journalSvg svg {
+.journal .journalSvg img {
     background-color: #fff;
     width: 100% !important;
     height: unset !important;

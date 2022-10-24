@@ -86,7 +86,7 @@
     fill: #aaa;
     cursor: not-allowed
 }
-.journalActions > .sharing > .liked {
+.journalActions > .sharing > .bookmarked {
     fill: var(--primary-900);
     color: var(--primary-900);
 }

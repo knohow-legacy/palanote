@@ -1,30 +1,30 @@
 import React from 'react';
-import { Comment, Favorite, AutoMode, MoreVert, Delete, Edit, Add, Remove } from '@mui/icons-material';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Comment, AutoMode, MoreVert, Delete, Edit, Add, Remove, Bookmark } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom';
 import { PublishedJournal, User, API } from '../../API/API';
 import './JournalActions.css';
 import ContextMenu from '../../ContextMenu/ContextMenu';
 import { ContentCopy } from '@mui/icons-material';
 
-function JournalActions({toJournal, journal, userData} : {toJournal: any, journal: PublishedJournal, userData: User | string}) {
+function JournalActions({toJournal, journal, userData, onDelete} : {toJournal: any, journal: PublishedJournal, userData: User | string, onDelete: any}) {
     const [isFollowing, setIsFollowing] = React.useState<null | boolean>(null);
-    const [isLiked, setIsLiked] = React.useState<boolean>(journal.isLiked);
-    
-    const navigate = useNavigate();
+    const [isBookmarked, setIsBookmarked] = React.useState<boolean>(journal.bookmarks);
 
     async function toggleFollowing(e:any) {
         e.preventDefault();
         e.stopPropagation();
+
+        let userID = typeof userData === 'string' ? userData : userData.id;
         setIsFollowing(!isFollowing);
-        setIsFollowing(await API.followUser(typeof userData === 'string' ? userData : userData.id));
+        setIsFollowing(await API.followUser(userID).catch(e => null));
     }
 
-    async function toggleLike(e:any) {
+    async function toggleBookmark(e:any) {
         e.preventDefault();
         e.stopPropagation();
         if (!journal.authenticated) {
-            setIsLiked(!isLiked);
-            setIsLiked(await API.likeJournal(journal.id));
+            setIsBookmarked(!isBookmarked);
+            setIsBookmarked(await API.bookmarkJournal(journal.id));
         }
     }
     async function remix(e:any) {
@@ -66,11 +66,7 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
                 onClick: async (e:any) => {
                     let result = await API.deleteJournalbyId(journal.id);
                     if (result) {
-                        if (window.location.href.includes("/journal/")) {
-                            navigate('/', {replace: true});
-                        } else {
-                            window.location.reload();
-                        }
+                        onDelete();
                     } else {
                         alert('Failed to delete journal.');
                     }
@@ -101,7 +97,7 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
         }
     } else {
         user = userData;
-        if (isFollowing === null) {
+        if (isFollowing === null && user.isFollowing !== null) {
             setIsFollowing(user.isFollowing);
         }
     }
@@ -114,17 +110,17 @@ function JournalActions({toJournal, journal, userData} : {toJournal: any, journa
                 } />
                 <div className="authorInfo">
                     <div className="authorName">{user.username}</div>
-                    <span className="authorFollowers">{user.followers} followers</span>
+                    <span className="authorFollowers">{user.followers} {user.followers === 1 ? 'follower' : 'followers'}</span>
                 </div>
-                {!user.authenticated && <div onClick={toggleFollowing} className={isFollowing ? "followBtn following" : "followBtn"}>
+                {!user.authenticated && user.isFollowing !== null && <div onClick={toggleFollowing} className={isFollowing ? "followBtn following" : "followBtn"}>
                     {isFollowing && <React.Fragment><Remove /><span>Unfollow</span></React.Fragment>}
                     {!isFollowing && <React.Fragment><Add /><span>Follow</span></React.Fragment>}
                 </div>}
             </NavLink>
             <div className="sharing" onClick={stopPropagation}>
-                <div className={"like" + (isLiked ? " liked" : journal.authenticated ? " disabled" : "")} onClick={toggleLike}>
-                    <Favorite />
-                    <span>{isLiked ? journal.likes + 1 : journal.likes}</span>
+                <div className={"bookmark" + (isBookmarked ? " bookmarked" : journal.authenticated ? " disabled" : "")} onClick={toggleBookmark}>
+                    <Bookmark />
+                    <span>{isBookmarked ? journal.likes + 1 : journal.likes}</span>
                 </div>
                 <div className="comments" onClick={toJournal}>
                     <Comment />

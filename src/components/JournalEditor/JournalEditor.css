@@ -91,6 +91,9 @@
     background-color: #777;
     color: white;
 }
+.journalToolbar .toolbarBtn.active img {
+    filter: invert();
+}
 .journalToolbar .postBtn {
     background-color: var(--secondary);
     color: white;

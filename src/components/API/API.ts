@@ -1,7 +1,9 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const ENDPOINT = 'https://postit.azurewebsites.net/api';
+const ENDPOINT = process.env.NODE_ENV === 'development' ?
+    'http://localhost:8080/api' :
+    'https://postit.azurewebsites.net/api';
 //const ENDPOINT = 'https://knohow.azurewebsites.net/api';
 
 export interface RemixInfo {
@@ -12,10 +14,6 @@ export interface RemixInfo {
     "remix-chain": number;
 }
 export interface Journal {
-    content: {
-        data: string; // JSON string
-        svg: string; // SVG string
-    }
     title: string;
     topics: Array<string>;
     visibility: 'public' | 'unlisted' | 'private';
@@ -28,9 +26,10 @@ export interface PublishedJournal extends Journal {
     id: string;
     authorID: string;
     likes: number;
+    bookmarks: boolean;
+    rating: number;
     comments: Array<string>;
     authenticated: boolean;
-    isLiked: boolean;
 }
 
 export interface User {
@@ -71,7 +70,7 @@ export class APIBase {
             }
         }).catch(() => {});
 
-        if (resp && resp.status == 200) {
+        if (resp && resp.status === 200) {
             return resp.data;
         }
         return {success: false};
@@ -95,8 +94,6 @@ export class APIBase {
      * @returns user - Success, and the journal object if true.
      */
      async fetchJournalById(journalId: string) : Promise<void | PublishedJournal> {
-        if (!journalId) throw new Error('None specified');
-
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
             headers['Authorization'] = `Bearer ${Authentication.token}`;
@@ -124,6 +121,22 @@ export class APIBase {
             return resp.data;
         }
         throw new Error('Unable to fetch journal from server.')
+    }
+
+    async fetchJournalRemixes(journalId: string) : Promise<Array<PublishedJournal>> {
+        if (!journalId) throw new Error('None specified');
+
+        let headers : any = { 'Accept': 'application/json' };
+        if (Authentication.isLoggedIn) {
+            headers['Authorization'] = `Bearer ${Authentication.token}`;
+        }
+        
+        let resp = await axios.get(`${ENDPOINT}/fetch-journal-remixes/${journalId}/0`, {headers: headers}).catch(() => {});
+        
+        if (resp && resp.status === 200) {
+            return resp.data;
+        }
+        throw new Error('Unable to fetch journals from server.')
     }
 
     async postComment(journalId: string, content: string) : Promise<boolean> {
@@ -185,8 +198,25 @@ export class APIBase {
      */
     fetchSelf() : Promise<User> { return this.fetchUserById('me'); }
 
+    getMediaURL(fileType: 'json'|'svg', userID: string, postID: string) {
+        return `${ENDPOINT.replace('/api', '/media')}/uploads/${fileType}/${userID}/${postID}`;
+    }
 
-    async uploadJournal(journal: Journal) : Promise<{success: false} | {success: true, journalID: string}> {
+    async fetchMedia(fileType: 'json'|'svg', userID: string, postID: string) {
+        let headers : any = { 'Accept': 'application/json' };
+        if (Authentication.isLoggedIn) {
+            headers['Authorization'] = `Bearer ${Authentication.token}`;
+        }
+        
+        let resp = await axios.get(this.getMediaURL(fileType, userID, postID), {headers: headers}).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data;
+        }
+        throw new Error('Could not fetch media from the server. :/');
+    }
+
+
+    async uploadJournal(journal: Journal, json: string, svg: string) : Promise<{success: false} | {success: true, journalID: string}> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
         let resp =  await axios.post(`${ENDPOINT}/upload-journal`, JSON.stringify(journal), {
@@ -195,20 +225,34 @@ export class APIBase {
                 'Content-Type': 'application/json'
             }
         }).catch(() => {});
+
         if (resp && resp.status === 200) {
-            return {success: true, journalID: resp.data.JournalID};
+            let resp2 = await axios.post(`${ENDPOINT.replace('/api', '/media')}/upload`, JSON.stringify({
+                userID: await this.fetchSelf().then(user => user.id),
+                journalID: resp.data.JournalID,
+                json,
+                svg: encodeURIComponent(svg)
+            }), {
+                headers: {
+                    'Authorization': `Bearer ${Authentication.token}`,
+                    'Content-Type': 'application/json'
+                }
+            }).catch(() => {});
+
+            if (resp2 && resp2.data) {
+                return {success: true, journalID: resp.data.JournalID};
+            }
         }
         return {success: false};
     }
 
-    async patchJournal(journal: PublishedJournal) : Promise<{success: false} | {success: true, journalID: string}> {
+    async patchJournal(journal: PublishedJournal, json: string, svg: string) : Promise<{success: false} | {success: true, journalID: string}> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
         let resp =  await axios.patch(`${ENDPOINT}/update-journal`, JSON.stringify({
             journalID: journal.id,
             title: journal.title,
             topics: journal.topics,
-            content: journal.content,
             isDraft: journal.isDraft,
             visibility: journal.visibility
         }), {
@@ -219,7 +263,21 @@ export class APIBase {
         }).catch(() => {});
 
         if (resp && resp.status === 200) {
-            return {success: true, journalID: resp.data.JournalID};
+            let resp2 = await axios.post(`${ENDPOINT.replace('/api', '/media')}/upload`, JSON.stringify({
+                userID: await this.fetchSelf().then(user => user.id),
+                journalID: resp.data.JournalID,
+                json,
+                svg: encodeURIComponent(svg)
+            }), {
+                headers: {
+                    'Authorization': `Bearer ${Authentication.token}`,
+                    'Content-Type': 'application/json'
+                }
+            }).catch(() => {});
+
+            if (resp2 && resp2.data) {
+                return {success: true, journalID: resp.data.JournalID};
+            }
         }
         return {success: false};
     }
@@ -228,6 +286,20 @@ export class APIBase {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
         let resp = await axios.delete(`${ENDPOINT}/delete-journal/${journalId}`, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return true;
+        }
+        return false;
+    }
+
+    async deleteAccount() : Promise<boolean> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.delete(`${ENDPOINT}/delete-user`, {
             headers: {
                 'Authorization': `Bearer ${Authentication.token}`,
             }
@@ -272,10 +344,10 @@ export class APIBase {
         throw new Error('Cannot follow user');
     }
 
-    async likeJournal(journalId: string) : Promise<boolean> {
+    async bookmarkJournal(journalId: string) : Promise<boolean> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
-        let resp = await axios.post(`${ENDPOINT}/like`, {
+        let resp = await axios.post(`${ENDPOINT}/bookmark`, {
             journalID: journalId
         }, {
             headers: {
@@ -283,9 +355,9 @@ export class APIBase {
             }
         }).catch(() => {});
         if (resp && resp.status === 200) {
-            return resp.data.isNowLiked;
+            return resp.data.isNowBookmarked;
         }
-        throw new Error('Cannot like post');
+        throw new Error('Cannot bookmark journal');
     }
 
     private async _queryJournals({query, fields, sort, page, remix} : {query: string, fields: Array<string>, sort: string, page: number, remix: string}) {

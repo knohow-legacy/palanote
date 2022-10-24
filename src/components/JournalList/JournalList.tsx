@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 import { PublishedJournal } from '../API/API';
@@ -20,9 +20,10 @@ import SortingOptions from './SortingOptions/SortingOptions';
 
 const limit = 10;
 
-function JournalList({fetchRoute, fetchArgs, showActions=true} : {fetchRoute : Function, fetchArgs : Array<any>, showActions?: boolean}) {
+function JournalList({fetchRoute, fetchArgs, placeholder, showActions=true} : {fetchRoute : Function, fetchArgs : Array<any>, placeholder?: any, showActions?: boolean}) {
     const [sortMode, setSortMode] = React.useState<'new' | 'top'>('new');
     const [remixMode, setRemixMode] = React.useState<'true' | 'false' | 'only'>('true');
+    const client = useQueryClient();
 
     const {data,
         error,
@@ -31,7 +32,13 @@ function JournalList({fetchRoute, fetchArgs, showActions=true} : {fetchRoute : F
         isFetching,
         isFetchingNextPage,
         status} : any = useInfiniteQuery([`journals-${fetchArgs}`, sortMode, remixMode],
-            async ({pageParam=0}) => {return await fetchRoute(...fetchArgs, sortMode, remixMode, pageParam, limit)},
+            async ({pageParam=0}) => {
+                let data = await fetchRoute(...fetchArgs, sortMode, remixMode, pageParam, limit)
+                data.forEach((item:any) => {
+                    client.setQueryData(['journal', item.id], item);
+                })
+                return data;
+            },
             { getNextPageParam: (lastPage, pages) => (lastPage.length === 0 ? null : pages.length) }
         );
     
@@ -41,13 +48,14 @@ function JournalList({fetchRoute, fetchArgs, showActions=true} : {fetchRoute : F
         target: bottomRef,
         onIntersect: fetchNextPage,
         enabled: !!hasNextPage,
+        threshold: 0.2
     })
 
     switch(status) {
         case 'loading':
             return <div className="journalList"><Loading /></div>;
         case 'error':
-            return <div className="journalList"><Error text={error.message} /></div>;
+            return <div className="journalList"><Error text={error.message} hasBackground={false} /></div>;
         default:
             return <div className="journalList">
                 {showActions && <SortingOptions setSortMode={setSortMode} sortMode={sortMode} setRemixMode={setRemixMode} remixMode={remixMode} />}
@@ -59,9 +67,10 @@ function JournalList({fetchRoute, fetchArgs, showActions=true} : {fetchRoute : F
                 ))}
 
                 <div key="bottom" ref={bottomRef} className="bottom">
-                    {isFetchingNextPage && <Loading />}
+                    {isFetchingNextPage && <Loading hasBackground={false} />}
                     {hasNextPage && !isFetchingNextPage && <button onClick={fetchNextPage}>Load more</button>}
-                    {!isFetchingNextPage && !hasNextPage && <div key="noMore" className="noMore">No more...</div>}
+                    {!isFetchingNextPage && !hasNextPage && !(placeholder && data.pages.length > 1) && <div key="noMore" className="noMore">No more...</div>}
+                    {(placeholder && data.pages.length <= 1) && <div key="placeholder" className="placeholder">{placeholder}</div>}
                 </div>
             </div>
     }

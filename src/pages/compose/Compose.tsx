@@ -19,9 +19,9 @@ function Compose() {
     async () => await API.fetchJournalById(journalId || ""),
     { enabled: !!journalId && Authentication.isLoggedIn });
   
-  if (!Authentication.isLoggedIn) {
+  /*if (!Authentication.isLoggedIn) {
     return (<Navigate to="/login" />);
-  }
+  }*/
 
   if (!journalId || result.status === 'error') {
     return (

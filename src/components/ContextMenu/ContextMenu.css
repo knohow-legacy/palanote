@@ -45,13 +45,13 @@
     user-select: none;
 }
 .contextMenuItem.danger {
-    color: red;
+    color: var(--danger);
 }
 .contextMenuItem:hover {
     background-color: #aaa;
 }
 .contextMenuItem.danger:hover {
-    background-color: #f00;
+    background-color: var(--danger);
     color: white;
 }
 

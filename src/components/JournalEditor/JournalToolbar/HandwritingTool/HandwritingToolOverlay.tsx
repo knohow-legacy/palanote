@@ -48,7 +48,7 @@ export const colors = [
     }
 ]
 
-function HandwritingToolOverlay({tool, editorHandler} : {tool : string, editorHandler : EditorHandler | undefined}) {
+function HandwritingToolOverlay({tool, editorHandler, closeWindow, isOpen} : {tool : string, editorHandler : EditorHandler | undefined, closeWindow: any, isOpen: boolean}) {
     const settings = editorHandler?.settings[tool];
 
     const [colorState, setColorState] = React.useState(settings?.color);
@@ -74,14 +74,14 @@ function HandwritingToolOverlay({tool, editorHandler} : {tool : string, editorHa
 
     const stopPropagation = (e : any) => e.stopPropagation();
     return (
-        <div className="toolOverlay" onClick={stopPropagation} onMouseOver={stopPropagation}>
+        <div className={isOpen ? "toolOverlay" : "toolOverlay closed"} onClick={stopPropagation} onMouseOver={stopPropagation}>
             <div className="colorPicker">
                 {tool !== 'eraser' && colors.map((color : any) => (
                     <div key={color.name}
                     title={color.name}
                     className={colorState === color.color ? 'color selectedColor' : 'color'}
-                    style={{backgroundColor: color.color}}
-                    onClick={(e:any) => updateColor(color.color)} />
+                    style={{borderColor: color.color, backgroundColor: color.color}}
+                    onClick={(e:any) => { updateColor(color.color); closeWindow() }} />
                 ))}
             </div>
             <div className="eraserPicker">

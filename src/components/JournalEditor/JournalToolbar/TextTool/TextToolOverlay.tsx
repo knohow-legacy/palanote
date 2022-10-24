@@ -55,7 +55,7 @@ function TextToolOverlay({tool, editorHandler} : {tool : string, editorHandler :
                     <div key={color.name}
                     title={color.name}
                     className={colorState === color.color ? 'color selectedColor' : 'color'}
-                    style={{backgroundColor: color.color}}
+                    style={{borderColor: color.color, backgroundColor: color.color}}
                     onClick={(e:any) => updateColor(color.color)} />
                 ))}
             </div>
