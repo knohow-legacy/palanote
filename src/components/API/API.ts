@@ -1,7 +1,8 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const ENDPOINT = process.env.NODE_ENV === 'development' ?
+const useProd = true;
+const ENDPOINT = process.env.NODE_ENV === 'development' && !useProd ?
     'http://localhost:8080/api' :
     'https://postit-backend.azurewebsites.net/api';
 //const ENDPOINT = 'https://knohow.azurewebsites.net/api';

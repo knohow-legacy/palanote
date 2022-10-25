@@ -81,7 +81,7 @@ export default class EditorHandler {
             width: 5,
             color: '#000000',
             opacity: 1,
-            pressureSensitive: true,
+            pressureSensitive: false,
             removesFullStrokes: false
         },
         highlighter: {
@@ -426,7 +426,7 @@ export default class EditorHandler {
             brush.width = this.settings[tool].width;
         } else {
             if (this.settings[tool].pressureSensitive) {
-                brush.pressureManager.min = 0.0001;
+                brush.pressureManager.min = 0.001;
             } else {
                 brush.pressureManager.min = 1;
             }

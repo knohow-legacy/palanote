@@ -19,9 +19,45 @@
         border-left: none !important;
         padding-left: 0 !important;
     }
+    .journal .journalActions > h2, .journal .journalActions > .topics, .journal .journalActions > b {
+        display: none;
+    }
 }
 
-.journalActions a {
+.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b {
+    display: none;
+}
+
+@media screen and (min-width: 801px) {
+    .journal:not(.expanded) .journalSvg {
+        width: calc(100% - 340px);
+    }
+    .journal:not(.expanded) > h2, .journal:not(.expanded) > b, .journal:not(.expanded) > .topics {
+        display: none;
+    }
+    .journal:not(.expanded) .journalActions {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 320px;
+        padding: 20px 10px;
+        flex-direction: column;
+        gap: 10px;
+        border-radius: 0 10px 10px 0;
+    }
+    .journal:not(.expanded) .journalActions .author {
+        flex-grow: 0;
+        border-radius: 100px;
+    }
+    .journal:not(.expanded) .journalActions .sharing {
+        flex-grow: 1;
+        border-left: none;
+        padding-left: 0;
+        align-items: flex-end;
+    }
+}
+
+.journalActions a:not(.tag) {
     text-decoration: none;
     color: black;
 }

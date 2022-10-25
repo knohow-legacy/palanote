@@ -54,7 +54,7 @@
     width: 20px;
     height: 20px;
 }
-.toolOverlay .eraserPicker .eraser {
+.toolOverlay .eraserPicker .eraser, .toolOverlay .formatPicker > * {
     width: calc(100% - 6px);
     height: calc(30px - 6px);
     background-color: #999;
@@ -68,7 +68,7 @@
     align-items: center;
     justify-content: space-around;
 }
-.toolOverlay .eraserPicker .selectedEraser {
+.toolOverlay .eraserPicker .selectedEraser, .toolOverlay .formatPicker .selectedBtn {
     border-color: var(--primary-50);
 }
 .toolOverlay .widthPicker {
@@ -88,14 +88,4 @@
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
-}
-.toolOverlay .formatPicker > * {
-    border: 1px solid #333;
-    color: black;
-    border-radius: 5px;
-    height: 30px;
-}
-.toolOverlay .formatPicker .selectedBtn {
-    background-color: #333;
-    color: white;
 }

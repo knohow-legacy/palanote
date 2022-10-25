@@ -1,6 +1,6 @@
 import React from 'react';
 import EditorHandler from '../../EditorHandler/EditorHandler';
-import { BorderColor, BorderColorOutlined } from '@mui/icons-material';
+import { BorderColor, BorderColorOutlined, Gesture } from '@mui/icons-material';
 import './HandwritingToolOverlay.css';
 
 // Overlay for handwritten tool (color, thickness, opacity)
@@ -54,6 +54,7 @@ function HandwritingToolOverlay({tool, editorHandler, closeWindow, isOpen} : {to
     const [colorState, setColorState] = React.useState(settings?.color);
     const [widthState, setWidthState] = React.useState(settings?.width);
     const [eraserState, setEraserState] = React.useState(settings?.removesFullStrokes);
+    const [pressureState, setPressureState] = React.useState(settings?.pressureSensitive);
     const [opacityState, setOpacityState] = React.useState(settings?.opacity);
 
     const updateColor = (color : string) => {
@@ -67,7 +68,12 @@ function HandwritingToolOverlay({tool, editorHandler, closeWindow, isOpen} : {to
     }
     const updateEraser = (removesFullStrokes : boolean) => {
         setEraserState(removesFullStrokes);
-        editorHandler?.updateToolSettings(tool as any, {removesFullStrokes: removesFullStrokes});
+        editorHandler?.updateToolSettings(tool as any, {removesFullStrokes});
+    }
+
+    const updatePressure = (pressureSensitive : boolean) => {
+        setPressureState(pressureSensitive);
+        editorHandler?.updateToolSettings(tool as any, {pressureSensitive});
     }
 
     let width = settings?.width || 2;
@@ -84,26 +90,44 @@ function HandwritingToolOverlay({tool, editorHandler, closeWindow, isOpen} : {to
                     onClick={(e:any) => { updateColor(color.color); closeWindow() }} />
                 ))}
             </div>
-            <div className="eraserPicker">
-                {tool === 'eraser' && (
-                    <React.Fragment>
-                        <div key="Erase Full Strokes"
-                        title="Erase Full Strokes"
-                        className={eraserState ? 'eraser selectedEraser' : 'eraser'}
-                        onClick={(e:any) => updateEraser(true)}>
-                            <BorderColor />
-                            <span>Full</span>
+            
+            {tool !== 'eraser' && (
+                <>
+                    <span style={{color: 'black'}}>Pressure Sensitivity</span>
+                    <div className="eraserPicker">
+                        <div key="Not Pressure Sensitive"
+                        title="Not Pressure Sensitive"
+                        className={pressureState ? 'eraser selectedEraser' : 'eraser'}
+                        onClick={(e:any) => updatePressure(true)}>
+                            <span>On</span>
                         </div>
-                        <div key="Erase Partial Strokes"
-                        className={eraserState ? 'eraser' : 'eraser selectedEraser'}
-                        onClick={(e:any) => updateEraser(false)}>
-                            <BorderColorOutlined />
-                            <span>Partial</span>
+                        <div key="Pressure Sensitive"
+                        title="Pressure Sensitive"
+                        className={pressureState ? 'eraser' : 'eraser selectedEraser'}
+                        onClick={(e:any) => updatePressure(false)}>
+                            <span>Off</span>
                         </div>
-                    </React.Fragment>
-                    )
-                }
-            </div>
+                    </div>
+                </>
+            )}
+            {tool === 'eraser' && (
+                <div className="eraserPicker">
+                    <div key="Erase Full Strokes"
+                    title="Erase Full Strokes"
+                    className={eraserState ? 'eraser selectedEraser' : 'eraser'}
+                    onClick={(e:any) => updateEraser(true)}>
+                        <BorderColor />
+                        <span>Full</span>
+                    </div>
+                    <div key="Erase Partial Strokes"
+                    title="Erase Partial Strokes"
+                    className={eraserState ? 'eraser' : 'eraser selectedEraser'}
+                    onClick={(e:any) => updateEraser(false)}>
+                        <BorderColorOutlined />
+                        <span>Partial</span>
+                    </div>
+                </div>
+            )}
             <div className="widthPicker">
                 <input className="widthInput" type="number" value={width} onChange={(e:any) => updateWidth((e.target as HTMLInputElement).value)} min="1" max="20" />
                 <input className="widthSlider" type="range" value={width} onChange={(e:any) => updateWidth((e.target as HTMLInputElement).value)} min="1" max="20" />

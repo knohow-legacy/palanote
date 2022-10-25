@@ -35,7 +35,7 @@
     cursor: pointer;
 }
 .header button:hover {
-    background-color: #ccc;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .header input, .header .input {
     flex-grow: 1;

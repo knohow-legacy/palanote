@@ -1,5 +1,5 @@
 import React from 'react';
-import { Comment, AutoMode, MoreVert, Delete, Edit, Add, Remove, Bookmark } from '@mui/icons-material';
+import { Comment, AutoMode, MoreVert, Delete, Edit, Add, Remove, Bookmark, Tag } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { PublishedJournal, User, API } from '../../API/API';
 import './JournalActions.css';
@@ -104,6 +104,9 @@ function JournalActions({toJournal, journal, userData, onDelete} : {toJournal: a
     
     return (
         <div className="journalActions">
+            <h2>{journal.title}</h2>
+            <b>{new Date(journal.timestampCreated).toDateString()}</b>
+            <div className="topics">{journal.topics.map((tag, index) => <NavLink to={`/search/tag/${tag}`} key={index} onClick={(e:any) => {e.stopPropagation()}} className="tag"><Tag />{tag}</NavLink>)}</div>
             <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? () => {} : stopPropagation} className="author">
                 <img className="authorPfp" src={user.pfp} alt={
                     user.username

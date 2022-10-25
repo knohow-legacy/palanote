@@ -54,7 +54,7 @@ function Sidebar({children} : {children: any}) {
             <div className="sidebar-wrapper">
                 <div className={"sidebar" + (isMinimized ? " minimized" : "")}>
                     <NavLink to="/" className="brandHome">
-                        <h1>palanote</h1>
+                        <h1>PalaNote</h1>
                     </NavLink>
                     {
                         sideBarItems.map((item, index) => {
