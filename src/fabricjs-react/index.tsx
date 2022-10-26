@@ -9,7 +9,7 @@ export interface Props {
 }
 
 /**
- * Fabric canvas as component, modified for PostIt.
+ * Fabric canvas as component, modified for PalaNote.
  */
 const FabricJSCanvas = ({ className, dimensions, onReady }: Props) => {
   const canvasEl = useRef(null)

@@ -1,7 +1,7 @@
 {
   "name": "palanote",
   "version": "0.2.0",
-  "homepage": "https://knohow.github.io/postit",
+  "homepage": "https://knohow.github.io/palanote",
   "private": true,
   "dependencies": {
     "@arch-inc/fabricjs-psbrush": "^0.0.20",

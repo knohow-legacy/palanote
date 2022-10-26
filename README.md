@@ -2,7 +2,7 @@
 This is the backend server component for Palanote.
 
 ## Authors
-Knohow - The PostIt Team
+Knohow - The PalaNote Team
 
 ## License
 [GNU LGPL-3.0](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
