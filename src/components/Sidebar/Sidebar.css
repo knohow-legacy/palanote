@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
 
-    height: calc(100vh - 20px);
+    height: calc(100% - 20px);
 
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     transition: width 0.2s;
 }
 .sidebar-wrapper {
-    min-height: 100vh;
+    min-height: 100%;
 }
 .sidebar .brandHome, .sidebar .brandHome h1 {
     text-decoration: none;
@@ -120,13 +120,13 @@
         bottom: 0;
         left: 0;
     
-        height: unset;
+        height: 40px;
         width: calc(100vw - 20px) !important;
 
         flex-direction: row;
         justify-content: center;
         gap: 30px;
-        padding: 10px;
+        padding: 5px;
 
         transition: unset;
         

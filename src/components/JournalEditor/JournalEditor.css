@@ -3,7 +3,7 @@
     border-right: 2px solid #ccc;
     background-color: #ccc;
     width: 100%;
-    height: calc(100vh - 71px);
+    height: calc(100% - 71px);
     box-sizing: border-box;
 
     overflow-x: hidden;
@@ -26,7 +26,7 @@
 }
 @media screen and (max-width: 800px) {
     .journalEditor {
-        height: calc(100vh - 141px);
+        height: calc(100% - 141px);
         overflow: hidden;
     }
     .screenTooSmall {

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Sidebar.css';
-import { Add, Search, Home, Person, CloseFullscreen, OpenInFull, Login, Logout, Settings } from '@mui/icons-material';
+import { Add, Search, Home, Person, CloseFullscreen, OpenInFull, Login, Settings } from '@mui/icons-material';
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Authentication } from '../Authentication/Authentication';

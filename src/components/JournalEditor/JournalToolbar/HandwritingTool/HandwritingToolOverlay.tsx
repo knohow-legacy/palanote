@@ -80,7 +80,7 @@ function HandwritingToolOverlay({tool, editorHandler, closeWindow, isOpen} : {to
 
     const stopPropagation = (e : any) => e.stopPropagation();
     return (
-        <div className={isOpen ? "toolOverlay" : "toolOverlay closed"} onClick={stopPropagation} onMouseOver={stopPropagation}>
+        <div className={isOpen ? "toolOverlay" : "toolOverlay closed"} onMouseDown={stopPropagation} onClick={stopPropagation} onMouseOver={stopPropagation}>
             <div className="colorPicker">
                 {tool !== 'eraser' && colors.map((color : any) => (
                     <div key={color.name}

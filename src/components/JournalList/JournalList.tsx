@@ -51,6 +51,7 @@ function JournalList({fetchRoute, fetchArgs, placeholder, showActions=true} : {f
         threshold: 0.2
     })
 
+    const noMore = !isFetchingNextPage && !hasNextPage;
     switch(status) {
         case 'loading':
             return <div className="journalList"><Loading /></div>;
@@ -69,8 +70,8 @@ function JournalList({fetchRoute, fetchArgs, placeholder, showActions=true} : {f
                 <div key="bottom" ref={bottomRef} className="bottom">
                     {isFetchingNextPage && <Loading hasBackground={false} />}
                     {hasNextPage && !isFetchingNextPage && <button onClick={fetchNextPage}>Load more</button>}
-                    {!isFetchingNextPage && !hasNextPage && !(placeholder && data.pages.length > 1) && <div key="noMore" className="noMore">No more...</div>}
-                    {(placeholder && data.pages.length <= 1) && <div key="placeholder" className="placeholder">{placeholder}</div>}
+                    {noMore && !(placeholder && data.pages.length <= 1) && <div key="noMore" className="noMore">No more...</div>}
+                    {noMore && (placeholder && data.pages.length <= 1) && <div key="placeholder" className="placeholder">{placeholder}</div>}
                 </div>
             </div>
     }

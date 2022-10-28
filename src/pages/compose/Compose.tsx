@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edit, Tag } from '@mui/icons-material';
 
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { API } from '../../components/API/API';
 import { Authentication } from '../../components/Authentication/Authentication';
@@ -31,6 +31,7 @@ function Compose() {
             <h2><Tag /></h2>
             <TagInput tags={tags} setTags={setTags} />
           </Header>
+          <Outlet />
           <JournalEditor titleRef={titleRef} tags={tags} isRemix={false} />
       </div>
     );
@@ -43,6 +44,7 @@ function Compose() {
             <h2><Tag /></h2>
             <TagInput defaultTags={result.data.topics} tags={tags} setTags={setTags} />
           </Header>
+          <Outlet />
           <JournalEditor draft={result.data} titleRef={titleRef} tags={tags} isRemix={false} />
       </div>
     );
@@ -52,6 +54,7 @@ function Compose() {
         <Header name={<Edit />}>
           <h2>Loading</h2>
         </Header>
+        <Outlet />
         <Loading />
       </div>)
   }

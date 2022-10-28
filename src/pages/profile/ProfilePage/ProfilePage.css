@@ -81,5 +81,5 @@
 
 .journals {
     position: relative;
-    min-height: calc(100vh - 350px - 71px);
+    min-height: calc(100% - 350px - 71px);
 }

@@ -49,20 +49,30 @@ code {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  max-width: 100%;
+}
+
+html, body, #root, .app {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 800px) {
   .app {
     flex-direction: column-reverse;
     overflow-y: hidden;
-    height: 100vh;
+    height: 100%;
   }
   .sidebar-wrapper {
-    height: 70px;
+    height: 50px;
   }
   .page {
     overflow-y: auto;
-    height: calc(100vh - 70px);
+    height: calc(100% - 50px);
   }
 }
 
@@ -74,6 +84,9 @@ a {
 .page {
   flex-grow: 1;
   position: relative;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
   border-left: 1px solid #ccc;
 }
 

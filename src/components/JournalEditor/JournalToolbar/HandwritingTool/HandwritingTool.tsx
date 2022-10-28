@@ -21,10 +21,10 @@ function HandwritingTool({title, tool, onClick, icon, isSelected, editorHandler}
                 setMenuOpen(false);
             }
         }
-        window.addEventListener('click', onClickOff);
+        window.addEventListener('mousedown', onClickOff);
 
         return () => {
-            window.removeEventListener('click', onClickOff);
+            window.removeEventListener('mousedown', onClickOff);
         }
     })
 
