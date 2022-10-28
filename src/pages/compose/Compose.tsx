@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edit, Tag } from '@mui/icons-material';
 
-import { Navigate, Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { API } from '../../components/API/API';
 import { Authentication } from '../../components/Authentication/Authentication';

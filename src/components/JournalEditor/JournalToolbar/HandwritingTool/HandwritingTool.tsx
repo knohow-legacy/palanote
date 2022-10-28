@@ -16,15 +16,17 @@ function HandwritingTool({title, tool, onClick, icon, isSelected, editorHandler}
     }
 
     React.useEffect(() => {
-        function onClickOff() {
-            if (menuOpen) {
+        function onClickOff(e:any) {
+            if (menuOpen && !e.target.closest('.toolbarBtn')) {
                 setMenuOpen(false);
             }
         }
         window.addEventListener('mousedown', onClickOff);
+        window.addEventListener('touchstart', onClickOff);
 
         return () => {
             window.removeEventListener('mousedown', onClickOff);
+            window.removeEventListener('touchstart', onClickOff);
         }
     })
 

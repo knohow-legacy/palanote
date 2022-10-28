@@ -11,6 +11,7 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
     let { editor, onReady } : any = useFabricJSEditor();
     let [editorHandler, setEditorHandler] = React.useState<EditorHandler | null>(null);
     let [isLoading, setIsLoading] = React.useState(false);
+    let [touchOffset, setTouchOffset] = React.useState<false|[number, number]>(false);
     const ref : any = React.useRef(null);
 
     function keyUp(e:any) {
@@ -41,10 +42,34 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
 
         setEditorHandler(editorHandler);
     }
+
+    // Handle scrolling ----
+    function handleScroll(e:any) {
+        if (editorHandler && editorHandler.psBrush.disableTouch) {
+            let scroll = (e.touches ? e.touches[0].clientY : e.clientY);
+            if (e.touches && e.touches[0].touchType === 'stylus') return;
+        
+            if (e.type === 'touchstart' || e.type === 'mousedown') {
+                setTouchOffset([ref.current.scrollTop, scroll]);
+            } else if (e.type === 'touchend' || e.type === 'mouseup') {
+                setTouchOffset(false);
+            } else if (touchOffset !== false) {
+                ref.current.scrollTop = touchOffset[0] + (touchOffset[1] - scroll);
+            }
+        }
+    }
+
     
 
     return (
-        <div ref={ref} className="journalEditor">
+        <div
+            ref={ref}
+            className="journalEditor"
+            onTouchStart={handleScroll}
+            onTouchMove={handleScroll}
+            onTouchEnd={handleScroll}
+            onTouchCancel={handleScroll}
+        >
             <div className="screenTooSmall"><h2>Your screen is too small to write notes.</h2><p>Writing journals is only supported on desktop and tablet devices.</p></div>
             {isLoading && (<Loading />)}
             {editorHandler && <JournalToolbar isLoading={isLoading} setIsLoading={setIsLoading} editorHandler={editorHandler} />}

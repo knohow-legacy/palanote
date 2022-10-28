@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { fabric } from 'fabric'
 import { useFabricJSEditor, FabricJSEditor, FabricJSEditorHook } from './editor'
 
@@ -31,24 +31,45 @@ const FabricJSCanvas = ({ className, dimensions, onReady }: Props) => {
       canvas.setWidth(canvasElParent.current?.clientWidth || 0)
       canvas.renderAll()
     }
-    const resizeCanvas = () => {
-      setCurrentDimensions()
-    }
+
     setCurrentDimensions();
 
-    (canvas as any)['setCurrentDimensions'] = setCurrentDimensions;
+    const resizeObserver = new ResizeObserver(() => {
+      // Do what you want to do when the size of the element changes
+      setCurrentDimensions();
+    });
+    resizeObserver.observe(canvasElParent.current as Element);
 
-    window.addEventListener('resize', resizeCanvas, false)
+    (canvas as any)['setCurrentDimensions'] = setCurrentDimensions;
 
     if (onReady) {
       onReady(canvas)
     }
 
     return () => {
-      canvas.dispose()
-      window.removeEventListener('resize', resizeCanvas)
+      canvas.dispose();
+      resizeObserver.disconnect();
     }
   }, [])
+
+  const preventDefault = (e:any) => {
+    if (e.target.tagName === "CANVAS") e.preventDefault();
+  }
+
+  useEffect(() => {
+    const states = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'touchenter', 'touchleave'];
+    // On iPad, this fixes the text selection popup from appearing when you double tap.
+    for (let i = 0; i < states.length; i++) {
+      window.addEventListener(states[i], preventDefault, {passive: false})
+    }
+
+    return () => {
+      for (let i = 0; i < states.length; i++) {
+        window.removeEventListener(states[i], preventDefault)
+      }
+    }
+  })
+
   return (
     <div ref={canvasElParent} className={className}>
       <canvas ref={canvasEl} />

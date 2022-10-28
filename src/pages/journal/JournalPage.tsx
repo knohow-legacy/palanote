@@ -32,9 +32,9 @@ function JournalPage() {
             {result.status === 'success' && <Journal expanded={true} journal={result.data as PublishedJournal} />}
             <div className="comments">
                 <CommentInput journalId={journalId} />
-                {commentsResult.status === 'loading' || remixesResult.status === 'loading' && <Loading />}
-                {commentsResult.status === 'error' || remixesResult.status === 'error' && <Error text="Something went wrong loading comments." />}
-                {commentsResult.status === 'success' && commentsResult.data.map((comment:any) => (
+                {(commentsResult.status === 'loading' || remixesResult.status === 'loading') && <Loading />}
+                {(commentsResult.status === 'error' || remixesResult.status === 'error') && <Error text="Something went wrong loading comments." />}
+                {(commentsResult.status === 'success') && commentsResult.data.map((comment:any) => (
                     <Comment key={comment.id} comment={comment} />
                 ))}
                 {remixesResult.status === 'success' && remixesResult.data.map((remix:any, index:any) => (

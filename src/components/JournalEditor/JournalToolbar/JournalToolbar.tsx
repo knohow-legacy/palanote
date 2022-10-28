@@ -117,13 +117,13 @@ const tools = [
             initial: (editor: EditorHandler) => editor.psBrush.disableTouch ? 'touch-disabled' : 'touch-enabled',
             items: [
                 {
-                    title: 'Enabled',
+                    title: 'Draw',
                     description: 'Touches will be used for input',
                     icon: <PanTool />,
                     key: 'touch-enabled',
                 },
                 {
-                    title: 'Disabled',
+                    title: 'Scroll',
                     description: 'Touches will be used for scrolling',
                     icon: <DoNotTouch />,
                     key: 'touch-disabled',

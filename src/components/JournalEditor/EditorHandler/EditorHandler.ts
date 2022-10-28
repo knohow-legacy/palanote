@@ -118,6 +118,9 @@ export default class EditorHandler {
     constructor(editor : FabricJSEditor) {
         this.editor = editor;
         this.psBrush = new PSBrush(editor.canvas);
+        this.psBrush.pressureCoeff = 50;
+        this.psBrush.simplifyTolerance = 0.2;
+        this.psBrush.pressureIgnoranceOnStart = 16;
         this.psBrush.disableTouch = true;
         this.eraseBrush = new (fabric as any).EraserBrush(editor.canvas);
 
@@ -427,10 +430,11 @@ export default class EditorHandler {
         } else {
             if (this.settings[tool].pressureSensitive) {
                 brush.pressureManager.min = 0.001;
+                brush.width = this.settings[tool].width * 4;
             } else {
                 brush.pressureManager.min = 1;
+                brush.width = this.settings[tool].width * 2;
             }
-            brush.width = this.settings[tool].width * 4;
             brush.color = this.settings[tool].color;
             brush.opacity = this.settings[tool].opacity;
         }
