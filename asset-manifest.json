@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/palanote/static/css/main.d2f4e1ba.css",
-    "main.js": "/palanote/static/js/main.c0a6f4c3.js",
+    "main.js": "/palanote/static/js/main.74a5db75.js",
     "static/js/787.e6b6981b.chunk.js": "/palanote/static/js/787.e6b6981b.chunk.js",
     "static/media/error.png": "/palanote/static/media/error.6a9791cc45193dae57a4.png",
     "static/media/pen.svg": "/palanote/static/media/pen.b5640cb391963b8a5e790962e9506931.svg",
@@ -9,11 +9,11 @@
     "static/media/eraser.svg": "/palanote/static/media/eraser.90130a2b346ed5c19cb936470f9b7197.svg",
     "index.html": "/palanote/index.html",
     "main.d2f4e1ba.css.map": "/palanote/static/css/main.d2f4e1ba.css.map",
-    "main.c0a6f4c3.js.map": "/palanote/static/js/main.c0a6f4c3.js.map",
+    "main.74a5db75.js.map": "/palanote/static/js/main.74a5db75.js.map",
     "787.e6b6981b.chunk.js.map": "/palanote/static/js/787.e6b6981b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d2f4e1ba.css",
-    "static/js/main.c0a6f4c3.js"
+    "static/js/main.74a5db75.js"
   ]
 }
