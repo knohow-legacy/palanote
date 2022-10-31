@@ -302,15 +302,14 @@ export default class EditorHandler {
             })
         })
         
-        this.editor.canvas.renderAll();
-        (this.editor.canvas as any).setCurrentDimensions();
+        this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
+        // @ts-ignore
+        this.editor.canvas.setCurrentDimensions();
 
         // clear histories added during load
         this.undoHistory = [];
         this.redoHistory = [];
         this.notify('update');
-        
-        //this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
     }
 
     saveDraft() : Promise<{success: false} | {success: true; journalID: string}> {

@@ -32,6 +32,9 @@ const FabricJSCanvas = ({ className, dimensions, onReady }: Props) => {
       canvas.renderAll()
     }
 
+    // @ts-ignore
+    canvas.setCurrentDimensions = setCurrentDimensions;
+
     setCurrentDimensions();
 
     const resizeObserver = new ResizeObserver(() => {
