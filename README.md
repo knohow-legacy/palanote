@@ -1,5 +1,5 @@
-# Palanote
-This is the backend server component for Palanote.
+# PalaNote
+This is the frontend UI component for PalaNote.
 
 ## Authors
 Knohow - The PalaNote Team
