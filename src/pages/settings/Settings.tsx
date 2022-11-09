@@ -12,6 +12,10 @@ import { API } from '../../components/API/API';
 function Settings() {
     const [logoutState, setLogoutState] = React.useState(!Authentication.isLoggedIn);
     const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+    const [isUserModified, setIsUserModified] = React.useState(false);
+
+    const bioRef = React.useRef<HTMLTextAreaElement>(null);
+    const usernameRef = React.useRef<HTMLInputElement>(null);
 
     const success = () => {
         Authentication.onLogoutSuccess();
@@ -29,6 +33,26 @@ function Settings() {
         return (<Navigate to="/" />);
     }
 
+    const onUserChange = () => {
+        if (!isUserModified) setIsUserModified(true);
+    }
+
+    const saveUser = async () => {
+        setIsUserModified(false);
+
+        if (bioRef.current && !bioRef.current?.value) {
+            bioRef.current.value = result.data?.bio || "";
+        }
+        if (usernameRef.current && !usernameRef.current?.value) {
+            usernameRef.current.value = result.data?.username || "";
+        }
+
+        await API.updateUser({
+            bio: result.data?.bio !== bioRef.current?.value ? bioRef.current?.value : undefined,
+            username: result.data?.username !== usernameRef.current?.value ? usernameRef.current?.value : undefined
+        })
+    }
+
     return (
         <div className="page settings">
             <Header icon={<SettingsIcon />} name="Settings" />
@@ -37,9 +61,10 @@ function Settings() {
                     <div className="pfp" style={{backgroundImage: `url(${result.data?.pfp})`}} />
                     <main>
                         <label>Username</label>
-                        <input type="text" disabled defaultValue={result.data?.username} />
+                        <input type="text" ref={usernameRef} maxLength={32} defaultValue={result.data?.username} onChange={onUserChange} />
                         <label>Bio</label>
-                        <textarea disabled defaultValue={result.data?.bio} />
+                        <textarea ref={bioRef} maxLength={256} defaultValue={result.data?.bio} onChange={onUserChange} />
+                        {isUserModified && <button className="saveAccountBtn" onClick={saveUser}>Save</button>}
                         <div className="flexSetting" style={{borderTop: '1px solid #ccc', paddingTop: '10px'}}>
                             <Logout />
                             <GoogleLogout

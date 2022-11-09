@@ -86,6 +86,17 @@
 .flexSetting > svg {
     color: #777;
 }
+.saveAccountBtn {
+    background-color: var(--primary);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    cursor: pointer;
+}
+
 .deleteAccountBtn {
     background-color: var(--danger);
     color: white;

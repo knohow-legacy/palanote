@@ -54,7 +54,7 @@ function Journal({index, journal, expanded} : {index?: any, journal: PublishedJo
                     onError={(e:any) => {e.target.onerror = null; e.target.src = ErrorImage}}
                 />
             </div>
-            <JournalActions onDelete={onDelete} toJournal={onClick} journal={journal} userData={result.status === 'success' ? result.data : result.status} />
+            <JournalActions onDelete={onDelete} toJournal={onClick} journal={journal} remixResult={remixResult} userData={result.status === 'success' ? result.data : result.status} />
         </div>
     );
 }

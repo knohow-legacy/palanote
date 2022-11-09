@@ -16,13 +16,14 @@ function TagInput({defaultTags = [], tags, setTags, maxTags=5} : any) {
         (keyCode === 32) || // space
         (keyCode === 9) || // tab
         (keyCode === 8) || // backspace
+        (keyCode === 13) || // enter
         (keyCode === 51 && shiftKey) // #
         )
     }
 
     function onKeyDown(e:any) {
         if (e.keyCode === 16 || !e.keyCode) return;
-        if (!validKey(e.keyCode, e.shiftKey)) return e.preventDefault();
+        if (!validKey(e.keyCode, e.shiftKey) || (tags.length >= maxTags && e.keyCode !== 8)) return e.preventDefault();
 
         let value = e.target.value.replace(/\s+/g, ' ').trim();
         

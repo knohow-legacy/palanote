@@ -19,12 +19,12 @@
         border-left: none !important;
         padding-left: 0 !important;
     }
-    .journal .journalActions > h2, .journal .journalActions > .topics, .journal .journalActions > b {
+    .journal .journalActions > h2, .journal .journalActions > .topics, .journal .journalActions > b, .journalActions > .remix {
         display: none;
     }
 }
 
-.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b {
+.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b, .journalActions > .remix {
     display: none;
 }
 
@@ -48,6 +48,7 @@
     .journal:not(.expanded) .journalActions .author {
         flex-grow: 0;
         border-radius: 100px;
+        max-width: 100%;
     }
     .journal:not(.expanded) .journalActions .sharing {
         flex-grow: 1;
@@ -55,6 +56,14 @@
         padding-left: 0;
         align-items: flex-end;
     }
+    .journal:not(.expanded) .journalActions {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+.journal .topics .tag {
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .journalActions a:not(.tag) {
@@ -74,14 +83,20 @@
     align-items: center;
     gap: 10px;
 }
+.journalActions .authorInfo {
+    flex-shrink: 1;
+    max-width: calc(100% - 55px);
+}
 .journalActions .author .authorName {
     font-weight: bold;
     font-size: 1.25em;
     color: black;
+    overflow-wrap: break-word;
 }
 .journalActions .author .authorPfp {
     height: 45px;
     width: 45px;
+    min-width: 45px;
     border-radius: 100%;
     overflow: hidden;
     background-color: #aaa;

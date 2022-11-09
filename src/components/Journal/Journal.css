@@ -24,9 +24,8 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
 }
-.journal h2 .remix {
-    display: inline-block;
-    margin-left: 10px;
+.journal .remix {
+    font-weight: bold;
     text-decoration: none;
     color: black;
     overflow-wrap: break-word;
@@ -35,6 +34,15 @@
     padding: 2px;
     border-radius: 5px;
     font-size: 20px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+.journal h2 .remix {
+    margin-left: 10px;
+    display: inline-block;
 }
 .journal h2 .remix svg {
     vertical-align: text-bottom;

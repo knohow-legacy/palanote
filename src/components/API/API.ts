@@ -77,6 +77,18 @@ export class APIBase {
         return {success: false};
     }
 
+    async updateUser(params: {username?: string, bio?: string, pfp?: string}) {
+        let headers : any = { 'Accept': 'application/json', 'Authorization': `Bearer ${Authentication.token}` };
+        
+        let resp = await axios.patch(`${ENDPOINT}/update-user`, params, {headers: headers}).catch(() => {});
+        
+        if (resp) {
+            return (resp as any).data;
+        } else {
+            throw new Error('Could not fetch journals from the server. :/');
+        }
+    }
+
     async fetchHome(sortMode: string, remixMode: string, offset=0, limit=5) : Promise<Array<PublishedJournal>> {
         let headers : any = { 'Accept': 'application/json', 'Authorization': `Bearer ${Authentication.token}` };
         

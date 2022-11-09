@@ -6,7 +6,7 @@ import './JournalActions.css';
 import ContextMenu from '../../ContextMenu/ContextMenu';
 import { ContentCopy } from '@mui/icons-material';
 
-function JournalActions({toJournal, journal, userData, onDelete} : {toJournal: any, journal: PublishedJournal, userData: User | string, onDelete: any}) {
+function JournalActions({toJournal, journal, userData, onDelete, remixResult} : {toJournal: any, journal: PublishedJournal, userData: User | string, onDelete: any, remixResult: any}) {
     const [isFollowing, setIsFollowing] = React.useState<null | boolean>(null);
     const [isBookmarked, setIsBookmarked] = React.useState<boolean>(journal.bookmarks);
 
@@ -107,6 +107,15 @@ function JournalActions({toJournal, journal, userData, onDelete} : {toJournal: a
             <h2>{journal.title}</h2>
             <b>{new Date(journal.timestampCreated).toDateString()}</b>
             <div className="topics">{journal.topics.map((tag, index) => <NavLink to={`/search/tag/${tag}`} key={index} onClick={(e:any) => {e.stopPropagation()}} className="tag"><Tag />{tag}</NavLink>)}</div>
+            {remixResult.data ?
+            (<NavLink
+                onClick={(e) => {e.stopPropagation()}}
+                to={`/journal/${journal.remixInfo['original-journal-id']}`}
+                className="remix"
+            >
+                <AutoMode />
+                <span>Remix of {remixResult.data.title}</span>
+            </NavLink>) : ''}
             <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? () => {} : stopPropagation} className="author">
                 <img className="authorPfp" src={user.pfp} alt={
                     user.username

@@ -27,7 +27,7 @@ function Compose() {
     return (
       <div className="page compose">
           <Header name={<Edit />}>
-            <input className="input" ref={titleRef} type="input" maxLength={100} placeholder="Untitled Journal..." />
+            <input className="input" ref={titleRef} type="input" maxLength={64} placeholder="Untitled Journal..." />
             <h2><Tag /></h2>
             <TagInput tags={tags} setTags={setTags} />
           </Header>
@@ -40,7 +40,7 @@ function Compose() {
     return (
       <div className="page compose">
           <Header name={<Edit />}>
-            <input className="input" ref={titleRef} type="input" maxLength={100} defaultValue={result.data.title === 'Untitled Journal' ? '' : result.data.title} placeholder="Untitled Journal..." />
+            <input className="input" ref={titleRef} type="input" maxLength={64} defaultValue={result.data.title === 'Untitled Journal' ? '' : result.data.title} placeholder="Untitled Journal..." />
             <h2><Tag /></h2>
             <TagInput defaultTags={result.data.topics} tags={tags} setTags={setTags} />
           </Header>
