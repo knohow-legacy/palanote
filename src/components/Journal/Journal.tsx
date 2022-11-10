@@ -49,7 +49,7 @@ function Journal({index, journal, expanded} : {index?: any, journal: PublishedJo
             <div className="journalSvg">
                 <img
                     width="100%"
-                    src={API.getMediaURL('svg', journal.authorID, journal.id)}
+                    src={API.getMediaURL(expanded ? 'svg' : 'preview', journal.authorID, journal.id)}
                     alt="Journal"
                     onError={(e:any) => {e.target.onerror = null; e.target.src = ErrorImage}}
                 />

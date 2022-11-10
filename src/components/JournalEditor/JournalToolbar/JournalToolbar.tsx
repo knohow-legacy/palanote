@@ -224,7 +224,7 @@ function JournalToolbar({editorHandler, isLoading, setIsLoading} : {editorHandle
             }
         }
 
-        if (e.keyCode === 46) { // Delete
+        if (e.keyCode === 46 || e.keyCode === 8) { // Delete
             editorHandler?.deleteSelection();
             
         } else if (e.keyCode === 27) { // Escape

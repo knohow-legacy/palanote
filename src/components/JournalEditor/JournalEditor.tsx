@@ -6,11 +6,13 @@ import { FabricJSCanvas, useFabricJSEditor } from '../../fabricjs-react/index';
 import JournalToolbar from './JournalToolbar/JournalToolbar';
 import EditorHandler from './EditorHandler/EditorHandler';
 import Loading from '../Loading/Loading';
+import { Add } from '@mui/icons-material';
 
 function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef : any, tags : any, draft? : any, isRemix : boolean}) {
     let { editor, onReady } : any = useFabricJSEditor();
     let [editorHandler, setEditorHandler] = React.useState<EditorHandler | null>(null);
     let [isLoading, setIsLoading] = React.useState(false);
+    let [pages, setPages] = React.useState(1);
     let [touchOffset, setTouchOffset] = React.useState<false|[number, number]>(false);
     const ref : any = React.useRef(null);
 
@@ -33,11 +35,9 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
     if (editor && !editorHandler) {
         let editorHandler = new EditorHandler(editor);
 
-        //inputRef.current.removeEventListener('keyup', saveTitle);
-        //inputRef.current.addEventListener('keyup', saveTitle);
-        
         if (draft) {
             editorHandler.loadDraft(draft, isRemix);
+            setPages(draft.pages);
         }
 
         setEditorHandler(editorHandler);
@@ -74,6 +74,12 @@ function JournalEditor({titleRef, tags, draft=null, isRemix=false} : {titleRef :
             {isLoading && (<Loading />)}
             {editorHandler && <JournalToolbar isLoading={isLoading} setIsLoading={setIsLoading} editorHandler={editorHandler} />}
             <FabricJSCanvas dimensions={{width: 1240, height: 1754}} className="journalCanvas" onReady={onReady} />
+            {editorHandler && <button
+                className="addPage"
+                onClick={() => { editorHandler?.addPage(); setPages(editorHandler?.pages || pages + 1)}}
+            >
+                <Add /> Add page {pages + 1}
+            </button>}
         </div>
     );
 }

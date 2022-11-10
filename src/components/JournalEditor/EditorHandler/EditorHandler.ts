@@ -64,6 +64,7 @@ export default class EditorHandler {
     visibility: 'public' | 'unlisted' | 'private' = 'public';
     draft: null | PublishedJournal = null;
     isRemix = false;
+    pages: number = 1;
 
     remixInfo: RemixInfo = {
         "allow-remix": true,
@@ -119,7 +120,6 @@ export default class EditorHandler {
         this.editor = editor;
         this.psBrush = new PSBrush(editor.canvas);
         this.psBrush.pressureCoeff = 50;
-        this.psBrush.simplifyTolerance = 0.2;
         this.psBrush.pressureIgnoranceOnStart = 16;
         this.psBrush.disableTouch = true;
         this.eraseBrush = new (fabric as any).EraserBrush(editor.canvas);
@@ -128,7 +128,7 @@ export default class EditorHandler {
         this.editor.canvas.uniformScaling = true;
 
         this.editor.canvas.on("object:added", ({target} : any) => {
-            if (target && !target.undone && !target.redone) {
+            if (target && !target.undone && !target.redone && (target.selectable && target.evented)) {
                 // Only update history on new items, not undone/redone items
                 this.redoHistory = [];
                 this.undoHistory.push({type: target.type, target: target.saveState()});
@@ -188,6 +188,7 @@ export default class EditorHandler {
             // TODO: find a better way to get bounding boxes of lines (not rectangles!)
             if(this.currentTool === 'eraser') {
                 this.redoHistory = [];
+                targets = targets.filter((t:any) => t.selectable === true);
 
                 if (this.settings[this.currentTool].removesFullStrokes) {
                     this.undoHistory.push({type: 'eraseFull', target: targets.map((t:any) => t.saveState())});
@@ -240,7 +241,7 @@ export default class EditorHandler {
         return false;
     }
 
-    async pasteSelection(text: string) {
+    pasteSelection(text: string) {
         if (!text.startsWith('{')) return;
         let json = JSON.parse(text);
 
@@ -279,8 +280,9 @@ export default class EditorHandler {
         if (!this.editor) return;
         this.draft = draft;
         this.isRemix = isRemix;
+        this.pages = draft.pages;
         this.setVisibility(draft.visibility);
-        this.editor.canvas.setDimensions({width: 1240, height: 1754});
+        this.editor.canvas.setDimensions({width: 1240, height: 1754 * this.pages});
 
         if (isRemix) {
             this.remixInfo['original-journal-id'] = draft.id;
@@ -302,7 +304,7 @@ export default class EditorHandler {
             })
         })
         
-        this.editor.canvas.setDimensions({width: 1240, height: 1754}); // A4 / 2
+        this.editor.canvas.setDimensions({width: 1240, height: 1754 * this.pages}); // A4 / 2
         // @ts-ignore
         this.editor.canvas.setCurrentDimensions();
 
@@ -310,6 +312,23 @@ export default class EditorHandler {
         this.undoHistory = [];
         this.redoHistory = [];
         this.notify('update');
+    }
+
+    generateSVGPreview() {
+        let objects: fabric.Object[] = [];
+        let scale = 1240 / this.editor.canvas.getWidth();
+
+        this.editor.canvas.forEachObject((object) => {
+            if ((object.top || 2000) < 1754 * scale) {
+                objects.push(object);
+            }
+        });
+
+        let group = new fabric.Group(objects);
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1240" height="1754" viewBox="0 0 1240 1754" xml:space="preserve"><desc>Created with Fabric.js 4.6.0</desc><defs></defs>`
+            + group.toSVG()
+            + "</svg>";
     }
 
     saveDraft() : Promise<{success: false} | {success: true; journalID: string}> {
@@ -321,10 +340,11 @@ export default class EditorHandler {
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
             visibility: this.visibility,
-            isDraft: this.draft.isDraft
+            isDraft: this.draft.isDraft,
+            pages: this.pages
         }
         
-        return API.patchJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG());
+        return API.patchJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG(), this.generateSVGPreview());
     }
 
     postJournal() : Promise<{success: false} | {success: true; journalID: string}> {
@@ -354,11 +374,31 @@ export default class EditorHandler {
             title: this.title || ((this.draft && this.isRemix) ? ("Remix of " + this.draft.title) : "Untitled Journal"),
             remixInfo: this.remixInfo,
             visibility: this.visibility,
-            isDraft: false
+            isDraft: false,
+            pages: this.pages
         }
         
         // If draft but not remix, update it instead of making a new object
-        return API.uploadJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG());
+        return API.uploadJournal(journal, JSON.stringify(this.editor.canvas.toJSON()), this.editor.canvas.toSVG(), this.generateSVGPreview());
+    }
+
+    addPage() {
+        this.pages++;
+        let scale = 1240 / this.editor.canvas.getWidth();
+        this.editor.canvas.setHeight(1754 / scale * this.pages);
+        
+        // Add page divider
+        let y = 1754 / scale * (this.pages - 1)
+        let line = new fabric.Line([
+            0, y,
+            this.editor.canvas.getWidth(), y
+        ], { stroke: '#000', selectable: false, evented: false, strokeDashArray: [5, 5] })
+        // @ts-ignore -- This is turned into an object, which has this property (we don't want users erasing page breaks)
+        line.erasable = false;
+
+        this.editor.canvas.add(line);
+        this.editor.canvas.renderAll();
+        this.notify('update');
     }
 
     // --- TEXT ---

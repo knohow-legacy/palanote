@@ -42,6 +42,26 @@
 .journalEditor .journalCanvas, .journalEditor .journalCanvas * {
     user-select: none;
 }
+.journalEditor button.addPage {
+    width: 100%;
+    height: 25vh;
+    outline: 0;
+    font-size: 1.5em;
+    font-family: inherit;
+    border: 0;
+    background-color: #ccc;
+    transition: background-color 0.1s ease-in-out;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.journalEditor button.addPage svg {
+    font-size: 1.75em;
+}
+.journalEditor button.addPage:hover {
+    background-color: #eee;
+}
 .journalToolbar {
     position: sticky;
     top: 0px;

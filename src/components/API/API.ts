@@ -1,7 +1,7 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const useProd = true;
+const useProd = false;
 const ENDPOINT = process.env.NODE_ENV === 'development' && !useProd ?
     'http://localhost:8080/api' :
     'https://postit-backend.azurewebsites.net/api';
@@ -20,6 +20,7 @@ export interface Journal {
     visibility: 'public' | 'unlisted' | 'private';
     isDraft: boolean;
     remixInfo: RemixInfo;
+    pages: number;
 }
 
 export interface PublishedJournal extends Journal {
@@ -211,7 +212,7 @@ export class APIBase {
      */
     fetchSelf() : Promise<User> { return this.fetchUserById('me'); }
 
-    getMediaURL(fileType: 'json'|'svg', userID: string, postID: string) {
+    getMediaURL(fileType: 'json'|'svg'|'preview', userID: string, postID: string) {
         return `${ENDPOINT.replace('/api', '/media')}/uploads/${fileType}/${userID}/${postID}`;
     }
 
@@ -229,7 +230,7 @@ export class APIBase {
     }
 
 
-    async uploadJournal(journal: Journal, json: string, svg: string) : Promise<{success: false} | {success: true, journalID: string}> {
+    async uploadJournal(journal: Journal, json: string, svg: string, previewSvg: string) : Promise<{success: false} | {success: true, journalID: string}> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
         let resp =  await axios.post(`${ENDPOINT}/upload-journal`, JSON.stringify(journal), {
@@ -244,6 +245,7 @@ export class APIBase {
                 userID: await this.fetchSelf().then(user => user.id),
                 journalID: resp.data.JournalID,
                 json,
+                previewSvg: encodeURIComponent(previewSvg),
                 svg: encodeURIComponent(svg)
             }), {
                 headers: {
@@ -259,7 +261,7 @@ export class APIBase {
         return {success: false};
     }
 
-    async patchJournal(journal: PublishedJournal, json: string, svg: string) : Promise<{success: false} | {success: true, journalID: string}> {
+    async patchJournal(journal: PublishedJournal, json: string, svg: string, previewSvg: string) : Promise<{success: false} | {success: true, journalID: string}> {
         if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
 
         let resp =  await axios.patch(`${ENDPOINT}/update-journal`, JSON.stringify({
@@ -280,6 +282,7 @@ export class APIBase {
                 userID: await this.fetchSelf().then(user => user.id),
                 journalID: resp.data.JournalID,
                 json,
+                previewSvg: encodeURIComponent(previewSvg),
                 svg: encodeURIComponent(svg)
             }), {
                 headers: {
