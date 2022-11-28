@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/palanote/static/css/main.2150b3c7.css",
-    "main.js": "/palanote/static/js/main.138ab887.js",
+    "main.css": "/palanote/static/css/main.19642ca9.css",
+    "main.js": "/palanote/static/js/main.4efb832e.js",
     "static/js/787.e6b6981b.chunk.js": "/palanote/static/js/787.e6b6981b.chunk.js",
     "static/media/error.png": "/palanote/static/media/error.6a9791cc45193dae57a4.png",
     "static/media/pen.svg": "/palanote/static/media/pen.b5640cb391963b8a5e790962e9506931.svg",
     "static/media/highlighter.svg": "/palanote/static/media/highlighter.ed9d84d3af165f5fa608a6f1feb0b3c7.svg",
     "static/media/eraser.svg": "/palanote/static/media/eraser.90130a2b346ed5c19cb936470f9b7197.svg",
     "index.html": "/palanote/index.html",
-    "main.2150b3c7.css.map": "/palanote/static/css/main.2150b3c7.css.map",
-    "main.138ab887.js.map": "/palanote/static/js/main.138ab887.js.map",
+    "main.19642ca9.css.map": "/palanote/static/css/main.19642ca9.css.map",
+    "main.4efb832e.js.map": "/palanote/static/js/main.4efb832e.js.map",
     "787.e6b6981b.chunk.js.map": "/palanote/static/js/787.e6b6981b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2150b3c7.css",
-    "static/js/main.138ab887.js"
+    "static/css/main.19642ca9.css",
+    "static/js/main.4efb832e.js"
   ]
 }
