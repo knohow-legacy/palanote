@@ -1,0 +1,115 @@
+.journalPopout .journal {
+    background-color: transparent;
+    cursor: default;
+}
+.journalPopout .journalSidebar {
+    position: fixed !important;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: max(30%, 340px);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+    background-color: #ddd;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    cursor: default;
+    overflow-y: auto;
+    transition: right 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.journalPopout .journalActions {
+    position: unset !important;
+    border-radius: 0 !important;
+    width: unset !important;
+    height: unset !important;
+    flex-shrink: 0;
+}
+.journalPopout .journalActions .sharing {
+    flex-grow: unset !important;
+}
+.journalPopout .journal .journalSvg {
+    height: unset !important;
+    overflow-y: auto;
+
+    display: flex;
+    justify-content: center;
+}
+.journalPopout .journalSvg img {
+    max-width: 800px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+.journalPopout .pageCount {
+    display: none;
+}
+.journalPopout .journalSvg:after {
+    content: unset !important;
+}
+.journalPopout {
+    overflow-y: auto;
+    background-color: #888 !important;
+}
+.journalPopout .comments {
+    position: relative;
+}
+.journalPopout .comments .loading {
+    margin-top: 150px;
+}
+.journalPopout .journalSidebar .mobileToggle {
+    display: none;
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(100px);
+    }
+    100% {
+        transform: 0;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .journalPopout .journalSidebar:not(.open) {
+        right: -350px;
+    }
+    .journalPopout .journalSidebar .mobileToggle > div {
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        gap: 10px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        background-color: #777;
+        animation: slideUp 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+        -webkit-tap-highlight-color: transparent;
+        outline: none !important;
+    }
+    .journalPopout .journalSidebar .mobileToggle svg {
+        font-size: 2em;
+        color: white;
+    }
+    .journalPopout .journalSidebar .mobileToggle span {
+        font-size: 1.25em;
+        line-height: 1.25em;
+        color: white;
+    }
+    .journalPopout .journalSidebar .mobileToggle {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding: 5px 20px 5px 5px;
+        width: 100vw;
+        line-height: 0;
+        color: black;
+        cursor: pointer;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)
+    }
+    .journalPopout .journal {
+        margin: 50px auto;
+    }
+}

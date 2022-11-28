@@ -1,6 +1,6 @@
 import React from 'react';
 import './Profile.css';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Outlet } from 'react-router-dom';
 import { useQuery } from 'react-query';
 
 import Header from '../../components/Header/Header';
@@ -35,6 +35,7 @@ function Profile() {
             <ProfilePage user={result.data} isSelf={true} />
             <JournalList fetchRoute={API.fetchJournalsByUser.bind(API)} fetchArgs={[result.data.id]} />
         </React.Fragment>)}
+        <Outlet />
       </div>
     );
 }

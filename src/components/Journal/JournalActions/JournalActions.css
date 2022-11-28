@@ -4,8 +4,7 @@
     justify-content: center;
     flex-wrap: wrap;
     
-    position: sticky;
-    bottom: 0px;
+    height: calc(100% - 40px);
     padding: 10px;
     background-color: #ddd;
     border-radius: 5px 5px 0 0;
@@ -20,11 +19,10 @@
         padding-left: 0 !important;
     }
     .journal .journalActions > h2, .journal .journalActions > .topics, .journal .journalActions > b, .journalActions > .remix {
-        display: none;
+        display: none !important;
     }
 }
-
-.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b, .journalActions > .remix {
+.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b,\ {
     display: none;
 }
 
@@ -51,7 +49,6 @@
         max-width: 100%;
     }
     .journal:not(.expanded) .journalActions .sharing {
-        flex-grow: 1;
         border-left: none;
         padding-left: 0;
         align-items: flex-end;
@@ -91,7 +88,10 @@
     font-weight: bold;
     font-size: 1.25em;
     color: black;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: min(320px, calc(100vw - 250px));
+    text-overflow: ellipsis;
 }
 .journalActions .author .authorPfp {
     height: 45px;
@@ -126,7 +126,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 .journalActions > .sharing > *:hover {
     background-color: #aaa;

@@ -5,8 +5,9 @@ import { PublishedJournal, User, API } from '../../API/API';
 import './JournalActions.css';
 import ContextMenu from '../../ContextMenu/ContextMenu';
 import { ContentCopy } from '@mui/icons-material';
+import StarRating from './StarRating/StarRating';
 
-function JournalActions({toJournal, journal, userData, onDelete, remixResult} : {toJournal: any, journal: PublishedJournal, userData: User | string, onDelete: any, remixResult: any}) {
+function JournalActions({toJournal, journal, userData, onDelete, remixResult, expanded} : {toJournal: any, journal: PublishedJournal, userData: User | string, onDelete: any, remixResult: any, expanded?: boolean}) {
     const [isFollowing, setIsFollowing] = React.useState<null | boolean>(null);
     const [isBookmarked, setIsBookmarked] = React.useState<boolean>(journal.bookmarks);
 
@@ -129,7 +130,9 @@ function JournalActions({toJournal, journal, userData, onDelete, remixResult} : 
                     {!isFollowing && <React.Fragment><Add /><span>Follow</span></React.Fragment>}
                 </div>}
             </NavLink>
-            <div className="sharing" onClick={stopPropagation}>
+            {!expanded && <div style={{flexGrow: 1}} />}
+            <StarRating journalId={journal.id} rating={journal.avgRating} userRating={journal.rating} />
+            <div className="sharing">
                 <div className={"bookmark" + (isBookmarked ? " bookmarked" : journal.authenticated ? " disabled" : "")} onClick={toggleBookmark}>
                     <Bookmark />
                     <span>{isBookmarked ? journal.likes + 1 : journal.likes}</span>

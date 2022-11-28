@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { NavLink } from 'react-router-dom';
 import Error from '../../../components/Error/Error';
 import Loading from '../../../components/Loading/Loading';
-import { API, Comment as CommentSchema } from '../../../components/API/API';
+import { API, Comment as CommentSchema, simpleDate } from '../../../components/API/API';
 
 import './Comment.css';
 
@@ -19,7 +19,7 @@ function Comment({comment} : {comment : CommentSchema}) {
                     <img className="authorPfp" src={result.data.pfp} alt={result.data.username} />
                     <div className="authorInfo">
                         <div className="authorName">{result.data.username}</div>
-                        <span className="authorFollowers">{result.data.followers} {result.data.followers === 1 ? 'follower' : 'followers'}</span>
+                        <span className="authorFollowers">{result.data.followers} {result.data.followers === 1 ? 'follower' : 'followers'} - {simpleDate(comment.timestamp)}</span>
                     </div>
                 </NavLink>
                 <div className="content">

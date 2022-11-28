@@ -1,6 +1,6 @@
 import React from 'react';
 import './Home.css';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { Authentication } from '../../components/Authentication/Authentication';
 import { API } from '../../components/API/API';
 
@@ -23,6 +23,7 @@ function Home() {
         fetchRoute={API.fetchHome.bind(API)}
         fetchArgs={[]}
       />
+      <Outlet />
     </div>
   );
 }

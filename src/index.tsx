@@ -4,10 +4,18 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 import App from './App';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { HashRouter as Router } from 'react-router-dom';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <App />
+      </Router>
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

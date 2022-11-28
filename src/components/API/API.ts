@@ -1,7 +1,7 @@
 import { Authentication } from "../Authentication/Authentication";
 import axios from 'axios';
 
-const useProd = false;
+const useProd = true;
 const ENDPOINT = process.env.NODE_ENV === 'development' && !useProd ?
     'http://localhost:8080/api' :
     'https://postit-backend.azurewebsites.net/api';
@@ -30,6 +30,7 @@ export interface PublishedJournal extends Journal {
     likes: number;
     bookmarks: boolean;
     rating: number;
+    avgRating: number;
     comments: Array<string>;
     authenticated: boolean;
 }
@@ -62,6 +63,23 @@ export const DefaultUser = {
     username: '[Deleted]',
     bio: '',
     timestampCreated: 0
+}
+
+export function simpleDate(time: number) {
+    const diff = (Date.now() - time) / 1000;
+    if (diff < 60) {
+        return 'Just now';
+    } else if (diff < 3600) {
+        return `${Math.floor(diff / 60)} ${Math.floor(diff / 60) === 1 ? 'minute' : 'minutes'} ago`;
+    } else if (diff < 86400) {
+        return `${Math.floor(diff / 3600)} ${Math.floor(diff / 3600) === 1 ? 'hour' : 'hours'} ago`;
+    } else if (diff < 604800) {
+        return `${Math.floor(diff / 86400)} ${Math.floor(diff / 86400) === 1 ? 'day' : 'days'} ago`;
+    } else if (diff < 31536000) {
+        return `${Math.floor(diff / 2592000)} ${Math.floor(diff / 2592000) === 1 ? 'month' : 'months'} ago`;
+    } else {
+        return `${Math.floor(diff / 31536000)} ${Math.floor(diff / 31536000) === 1 ? 'year' : 'years'} ago`;
+    }
 }
 
 export class APIBase {
@@ -98,6 +116,9 @@ export class APIBase {
         if (resp) {
             return (resp as any).data;
         } else {
+            if ((resp as any).status === 404) {
+                Authentication.onLogoutSuccess();
+            }
             throw new Error('Could not fetch journals from the server. :/');
         }
     }
@@ -170,6 +191,23 @@ export class APIBase {
         throw new Error('Cannot comment');
     }
 
+    async rateJournal(journalId: string, rating: number) : Promise<{newAverageRating: number, newUserRating: number, success: boolean}> {
+        if (!Authentication.isLoggedIn) throw new Error('Unauthorized');
+
+        let resp = await axios.post(`${ENDPOINT}/rate`, {
+            journalID: journalId,
+            rating: rating
+        }, {
+            headers: {
+                'Authorization': `Bearer ${Authentication.token}`,
+            }
+        }).catch(() => {});
+        if (resp && resp.status === 200) {
+            return resp.data;
+        }
+        throw new Error('Cannot rate');
+    }
+
     async fetchJournalsByUser(userId: string, sortMode: string, remixMode:string, offset=0, limit=5) {
         let headers : any = { 'Accept': 'application/json' };
         if (Authentication.isLoggedIn) {
@@ -202,6 +240,9 @@ export class APIBase {
         if (resp) {
             return (resp as any).data;
         } else {
+            if (userId === "me") {
+                Authentication.onLogoutSuccess();
+            }
             throw new Error('Could not fetch user from the server. :/');
         }
     }

@@ -2,10 +2,12 @@ import React from 'react';
 import Loading from '../../../components/Loading/Loading';
 import { API } from '../../../components/API/API';
 import './Comment.css';
+import { useQueryClient } from 'react-query';
 
 function CommentInput({journalId} : {journalId: string}) {
     const [isLoading, setLoading] = React.useState(false);
     const inputRef = React.useRef<any>(null);
+    const queryClient = useQueryClient();
 
     async function postComment() {
         if (!inputRef || !inputRef.current.value) {
@@ -13,7 +15,8 @@ function CommentInput({journalId} : {journalId: string}) {
         }
         setLoading(true);
         await API.postComment(journalId, inputRef.current.value || "No text provided");
-        window.location.reload();
+        queryClient.invalidateQueries(`journal-comments-${journalId}`);
+        setLoading(false);
     }
 
     return (

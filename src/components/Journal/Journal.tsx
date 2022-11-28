@@ -1,7 +1,7 @@
 import { AutoMode, Tag } from '@mui/icons-material';
 import React from 'react';
 import { useQuery } from 'react-query';
-import { useNavigate, NavLink } from 'react-router-dom'; 
+import { useNavigate, NavLink, useLocation } from 'react-router-dom'; 
 import { PublishedJournal, API } from '../API/API';
 import './Journal.css';
 import ErrorImage from './error.png';
@@ -10,15 +10,16 @@ import JournalActions from './JournalActions/JournalActions';
 function Journal({index, journal, expanded} : {index?: any, journal: PublishedJournal, expanded: boolean}) {
     const [isDeleted, setIsDeleted] = React.useState(false);
     const result = useQuery(['user', journal.authorID], async () => await API.fetchUserById(journal.authorID));
-    const remixResult = useQuery(`journal-${journal.remixInfo['original-journal-id']}`, async () => await API.fetchJournalById(journal.remixInfo['original-journal-id']), {
+    const remixResult = useQuery(['journal', journal.remixInfo['original-journal-id']], async () => await API.fetchJournalById(journal.remixInfo['original-journal-id']), {
         enabled: !!journal.remixInfo['is-remix']
     });
 
     const navigate = useNavigate();
+    const location = useLocation();
     
     function onClick(e:any) {
         e.preventDefault();
-        navigate(`/journal/${journal.id}`, {replace: false});
+        navigate(`/journal/${journal.id}`, {replace: false, state: window.innerWidth > 800 ? { background: location } : undefined});
         window.scrollTo(0, 0); // scroll to top
     }
 
@@ -53,8 +54,9 @@ function Journal({index, journal, expanded} : {index?: any, journal: PublishedJo
                     alt="Journal"
                     onError={(e:any) => {e.target.onerror = null; e.target.src = ErrorImage}}
                 />
+                <span className="pageCount">{journal.pages} {journal.pages === 1 ? 'page' : 'pages'}</span>
             </div>
-            <JournalActions onDelete={onDelete} toJournal={onClick} journal={journal} remixResult={remixResult} userData={result.status === 'success' ? result.data : result.status} />
+            <JournalActions expanded={expanded} onDelete={onDelete} toJournal={onClick} journal={journal} remixResult={remixResult} userData={result.status === 'success' ? result.data : result.status} />
         </div>
     );
 }

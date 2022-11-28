@@ -1,0 +1,49 @@
+.starRating {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: #ddd !important;
+
+    width: calc(100% - 10px);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.starRating span {
+    font-size: 24px;
+}
+.starRating .star {
+    height: 24px;
+    width: 24px;
+    position: relative;
+    cursor: pointer;
+}
+.star .fill {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.star .starMask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    top: 0;
+    left: 0;
+}
+.starRating .star:before {
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background-color: #ff0;
+    top: 0;
+    left: 0;
+}
+.starRating .star:before {
+    background-color: #777;
+    content: "";
+    width: 100%;
+}

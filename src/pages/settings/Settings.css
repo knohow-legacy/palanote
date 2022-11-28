@@ -27,8 +27,9 @@
     border-radius: 5px;
 }
 .profileSettings > .pfp {
-    width: 100px;
-    height: 100px;
+    width: min(20vw, 100px);
+    height: min(20vw, 100px);
+    flex-shrink: 0;
     border-radius: 100%;
     background-color: #ccc;
     position: relative;
