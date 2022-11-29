@@ -48,6 +48,12 @@
     border-radius: 5px;
     margin-bottom: 10px;
     font-family: inherit;
+    position: relative;
+}
+.addComment .charsLeft {
+    position: absolute;
+    top: 90px;
+    right: 25px;
 }
 .commentBtn {
     background-color: var(--secondary);

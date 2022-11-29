@@ -105,10 +105,7 @@ function JournalActions({toJournal, journal, userData, onDelete, remixResult, ex
     
     return (
         <div className="journalActions">
-            <h2>{journal.title}</h2>
-            <b>{new Date(journal.timestampCreated).toDateString()}</b>
-            <div className="topics">{journal.topics.map((tag, index) => <NavLink to={`/search/tag/${tag}`} key={index} onClick={(e:any) => {e.stopPropagation()}} className="tag"><Tag />{tag}</NavLink>)}</div>
-            {remixResult.data ?
+            <h2>{journal.title} {remixResult.data ?
             (<NavLink
                 onClick={(e) => {e.stopPropagation()}}
                 to={`/journal/${journal.remixInfo['original-journal-id']}`}
@@ -116,7 +113,9 @@ function JournalActions({toJournal, journal, userData, onDelete, remixResult, ex
             >
                 <AutoMode />
                 <span>Remix of {remixResult.data.title}</span>
-            </NavLink>) : ''}
+            </NavLink>) : ''}</h2>
+            <b>{new Date(journal.timestampCreated).toDateString()}</b>
+            <div className="topics">{journal.topics.map((tag, index) => <NavLink to={`/search/tag/${tag}`} key={index} onClick={(e:any) => {e.stopPropagation()}} className="tag"><Tag />{tag}</NavLink>)}</div>
             <NavLink to={`/profile/${user.id}`} onClick={user.id === '-1' ? () => {} : stopPropagation} className="author">
                 <img className="authorPfp" src={user.pfp} alt={
                     user.username

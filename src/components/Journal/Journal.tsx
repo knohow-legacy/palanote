@@ -7,7 +7,7 @@ import './Journal.css';
 import ErrorImage from './error.png';
 import JournalActions from './JournalActions/JournalActions';
 
-function Journal({index, journal, expanded} : {index?: any, journal: PublishedJournal, expanded: boolean}) {
+function Journal({index, journal} : {index?: any, journal: PublishedJournal}) {
     const [isDeleted, setIsDeleted] = React.useState(false);
     const result = useQuery(['user', journal.authorID], async () => await API.fetchUserById(journal.authorID));
     const remixResult = useQuery(['journal', journal.remixInfo['original-journal-id']], async () => await API.fetchJournalById(journal.remixInfo['original-journal-id']), {
@@ -32,31 +32,17 @@ function Journal({index, journal, expanded} : {index?: any, journal: PublishedJo
     }
 
     return (
-        <div key={index} onClick={expanded ? () => {} : onClick} className={"journal" + (expanded ? " expanded" : "") + (isDeleted ? " deleted" : "")}>
-            <h2>
-                {journal.title}
-                {remixResult.data ?
-                    (<NavLink
-                        onClick={(e) => {e.stopPropagation()}}
-                        to={`/journal/${journal.remixInfo['original-journal-id']}`}
-                        className="remix"
-                    >
-                        <AutoMode />
-                        <span>Remix of {remixResult.data.title}</span>
-                    </NavLink>) : ''}
-            </h2>
-            <b>{new Date(journal.timestampCreated).toDateString()}</b>
-            <div className="topics">{journal.topics.map((tag, index) => <NavLink to={`/search/tag/${tag}`} key={index} onClick={(e:any) => {e.stopPropagation()}} className="tag"><Tag />{tag}</NavLink>)}</div>
+        <div key={index} onClick={onClick} className={"journal" + (isDeleted ? " deleted" : "")}>
             <div className="journalSvg">
                 <img
                     width="100%"
-                    src={API.getMediaURL(expanded ? 'svg' : 'preview', journal.authorID, journal.id)}
+                    src={API.getMediaURL('preview', journal.authorID, journal.id)}
                     alt="Journal"
                     onError={(e:any) => {e.target.onerror = null; e.target.src = ErrorImage}}
                 />
                 <span className="pageCount">{journal.pages} {journal.pages === 1 ? 'page' : 'pages'}</span>
             </div>
-            <JournalActions expanded={expanded} onDelete={onDelete} toJournal={onClick} journal={journal} remixResult={remixResult} userData={result.status === 'success' ? result.data : result.status} />
+            <JournalActions expanded={false} onDelete={onDelete} toJournal={onClick} journal={journal} remixResult={remixResult} userData={result.status === 'success' ? result.data : result.status} />
         </div>
     );
 }

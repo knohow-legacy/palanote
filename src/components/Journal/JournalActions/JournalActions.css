@@ -9,55 +9,6 @@
     background-color: #ddd;
     border-radius: 5px 5px 0 0;
 }
-
-@media screen and (max-width: 800px) {
-    .journalActions > * {
-        margin-bottom: 10px
-    }
-    .journalActions .sharing {
-        border-left: none !important;
-        padding-left: 0 !important;
-    }
-    .journal .journalActions > h2, .journal .journalActions > .topics, .journal .journalActions > b, .journalActions > .remix {
-        display: none !important;
-    }
-}
-.journal.expanded .journalActions > h2, .journal.expanded .journalActions > .topics, .journal.expanded .journalActions > b,\ {
-    display: none;
-}
-
-@media screen and (min-width: 801px) {
-    .journal:not(.expanded) .journalSvg {
-        width: calc(100% - 340px);
-    }
-    .journal:not(.expanded) > h2, .journal:not(.expanded) > b, .journal:not(.expanded) > .topics {
-        display: none;
-    }
-    .journal:not(.expanded) .journalActions {
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 320px;
-        padding: 20px 10px;
-        flex-direction: column;
-        gap: 10px;
-        border-radius: 0 10px 10px 0;
-    }
-    .journal:not(.expanded) .journalActions .author {
-        flex-grow: 0;
-        border-radius: 100px;
-        max-width: 100%;
-    }
-    .journal:not(.expanded) .journalActions .sharing {
-        border-left: none;
-        padding-left: 0;
-        align-items: flex-end;
-    }
-    .journal:not(.expanded) .journalActions {
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-}
 .journal .topics .tag {
     max-width: 100%;
     overflow-wrap: break-word;
@@ -71,7 +22,6 @@
     border: 1px solid #ccc;
     padding-left: 5px;
     margin-right: 10px;
-    flex-grow: 1;
     color: #333;
     border-radius: 100px 10px 10px 100px;
 
@@ -118,6 +68,7 @@
 }
 .journalActions .followBtn.following {
     background-color: #aaa;
+    height: 45px;
 }
 .journalActions .sharing {
     border-left: 1px solid #ccc;
@@ -153,4 +104,56 @@
     border: 1px solid #aaa;
     border-radius: 5px;
     font-size: 1.25em;
+}
+
+.journal .journalSvg {
+    width: calc(100% - 340px);
+}
+.journal.expanded > h2, .journal.expanded > b, .journal.expanded > .topics {
+    display: none;
+}
+.journal .journalActions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 320px;
+    padding: 20px 10px;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 0 10px 10px 0;
+}
+.journal.expanded .journalActions .author {
+    flex-grow: 0;
+    border-radius: 100px;
+    max-width: 100%;
+}
+.journal.expanded .journalActions .sharing {
+    border-left: none;
+    padding-left: 0;
+    align-items: flex-end;
+}
+.journal.expanded .journalActions {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media screen and (max-width: 800px) {
+    .journalActions > * {
+        margin-bottom: 10px
+    }
+    .journalActions .sharing {
+        border-left: none !important;
+        padding-left: 0 !important;
+    }
+    .journal .journalActions {
+        position: relative;
+        width: unset;
+        border-radius: unset;
+    }
+    .journal .journalSvg {
+        width: unset;
+    }
+    .journal:not(.expanded) .journalSvg {
+        max-height: 30vh;
+    }
 }

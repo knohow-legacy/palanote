@@ -37,10 +37,10 @@ function JournalPopout() {
     const navigate = useNavigate();
 
     return (
-        <Popout className="journalPopout">
+        <Popout className="journalPopout" onClickOut={isMobileOpen ? () => setIsMobileOpen(false) : null}>
             {result.status === 'loading' && <Loading />}
             {result.status === 'error' && <Error text="Journal not found." />}
-            {result.status === 'success' && <div className="journal">
+            {result.status === 'success' && <div className="journal expanded">
                 <h2>
                     {journal.title}
                     {remixResult.data ?

@@ -73,7 +73,7 @@ export function simpleDate(time: number) {
         return `${Math.floor(diff / 60)} ${Math.floor(diff / 60) === 1 ? 'minute' : 'minutes'} ago`;
     } else if (diff < 86400) {
         return `${Math.floor(diff / 3600)} ${Math.floor(diff / 3600) === 1 ? 'hour' : 'hours'} ago`;
-    } else if (diff < 604800) {
+    } else if (diff < 2592000) {
         return `${Math.floor(diff / 86400)} ${Math.floor(diff / 86400) === 1 ? 'day' : 'days'} ago`;
     } else if (diff < 31536000) {
         return `${Math.floor(diff / 2592000)} ${Math.floor(diff / 2592000) === 1 ? 'month' : 'months'} ago`;

@@ -19,7 +19,7 @@ function Comment({comment} : {comment : CommentSchema}) {
                     <img className="authorPfp" src={result.data.pfp} alt={result.data.username} />
                     <div className="authorInfo">
                         <div className="authorName">{result.data.username}</div>
-                        <span className="authorFollowers">{result.data.followers} {result.data.followers === 1 ? 'follower' : 'followers'} - {simpleDate(comment.timestamp)}</span>
+                        <span className="authorFollowers" title={new Date(comment.timestamp).toLocaleString()}>{result.data.followers} {result.data.followers === 1 ? 'follower' : 'followers'} - {simpleDate(comment.timestamp)}</span>
                     </div>
                 </NavLink>
                 <div className="content">

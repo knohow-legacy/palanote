@@ -63,7 +63,7 @@ function JournalList({fetchRoute, fetchArgs, placeholder, showActions=true} : {f
                 {data.pages.map((page: Array<PublishedJournal>, pageIndex:number) =>
                     (
                     <React.Fragment key={pageIndex * -1}>
-                        {page.map((journal, index) => <Journal key={index + limit * pageIndex} index={index + limit * pageIndex} journal={journal} expanded={false} />)}
+                        {page.map((journal, index) => <Journal key={index + limit * pageIndex} index={index + limit * pageIndex} journal={journal} />)}
                     </React.Fragment>
                 ))}
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Home.css';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Authentication } from '../../components/Authentication/Authentication';
 import { API } from '../../components/API/API';
 
@@ -9,7 +9,8 @@ import JournalList from '../../components/JournalList/JournalList';
 import { Home as HomeIcon } from '@mui/icons-material';
 
 function Home() {
-  if (!Authentication.isLoggedIn) {
+  const location = useLocation();
+  if (!Authentication.isLoggedIn && location.pathname === '/') {
     return (<Navigate to="/login" />);
   }
   
